@@ -1,0 +1,18 @@
+body {
+    font: 12pt monospace;
+    margin: 0;
+    overflow: hidden;
+}
+
+h2 {
+    margin: 0
+}
+
+#aa {
+    text-decoration: none;
+}
+
+#menu {
+    margin: 0 20px;
+    position: absolute;
+}
