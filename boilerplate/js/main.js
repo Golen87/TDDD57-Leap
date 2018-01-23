@@ -3,7 +3,7 @@ var baseBoneRotation = (new THREE.Quaternion).setFromEuler(new THREE.Euler(0, 0,
 var armMeshes = [];
 var boneMeshes = [];
 
-var stats, renderer, scene, camera, controls;
+var stats, renderer, scene, camera, controls, sphere, spheremat;
 
 init();
 Leap.loop({background: true}, leapAnimate).connect();
@@ -37,6 +37,12 @@ function init() {
 	var mesh = new THREE.Mesh(geometry, material);
 	mesh.position.set(0, -10, 0);
 	scene.add(mesh);
+
+    var spheregeo = new THREE.SphereGeometry(50, 32, 32);
+    spheremat = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+    sphere = new THREE.Mesh(spheregeo, spheremat);
+    sphere.position.set(0, 200, 0);
+    scene.add(sphere);
 
 	window.addEventListener('resize', onWindowResize, false);
 }
@@ -77,19 +83,25 @@ function leapAnimate(frame) {
         scene.remove(item)
     });
 
+    sphere.material.color = new THREE.Color(0xffff00);
 	for (var hand of frame.hands) {
+        let grabbed = hand.grabStrength > 0.5;
+        if (grabbed) {
+            sphere.material.color = new THREE.Color(0xff0000);
+        }
+        
 		for (var finger of hand.fingers) {
-			for ( var bone of finger.bones) {
+			for (var bone of finger.bones) {
 				if (countBones++ === 0)
                     continue;
 
-				var boneMesh = boneMeshes [ countBones ] || addMesh(boneMeshes);
+				var boneMesh = boneMeshes[countBones] || addMesh(boneMeshes);
 				updateMesh(bone, boneMesh);
 			}
 		}
 
 		var arm = hand.arm;
-		var armMesh = armMeshes [ countArms++ ] || addMesh(armMeshes);
+		var armMesh = armMeshes[countArms++] || addMesh(armMeshes);
 		updateMesh(arm, armMesh);
 		armMesh.scale.set(arm.width / 4, arm.width / 2, arm.length);
 	}
