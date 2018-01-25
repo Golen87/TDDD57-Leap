@@ -2,8 +2,9 @@
 var baseBoneRotation = (new THREE.Quaternion).setFromEuler(new THREE.Euler(0, 0, Math.PI / 2));
 var armMeshes = [];
 var boneMeshes = [];
+var spheres = [];
 
-var stats, renderer, scene, camera, controls, sphere, spheremat;
+var stats, renderer, scene, camera, controls;
 
 init();
 Leap.loop({background: true}, leapAnimate).connect();
@@ -25,7 +26,9 @@ function init() {
 
 	scene = new THREE.Scene();
 
-    // helpers
+
+	/* Helpers */
+
 	var gridHelper = new THREE.GridHelper(150, 10);
 	scene.add(gridHelper);
 
@@ -38,11 +41,19 @@ function init() {
 	mesh.position.set(0, -10, 0);
 	scene.add(mesh);
 
-    var spheregeo = new THREE.SphereGeometry(50, 32, 32);
-    spheremat = new THREE.MeshBasicMaterial({ color: 0xffff00 });
-    sphere = new THREE.Mesh(spheregeo, spheremat);
-    sphere.position.set(0, 200, 0);
-    scene.add(sphere);
+	/* Spheres */
+
+	var s = new Sphere(scene);
+	s.mesh.position.set(0, 200, 0);
+	spheres.push(s);
+
+	var s = new Sphere(scene);
+	s.mesh.position.set(100, 300, 0);
+	spheres.push(s);
+
+	var s = new Sphere(scene);
+	s.mesh.position.set(-100, 200, -100);
+	spheres.push(s);
 
 	window.addEventListener('resize', onWindowResize, false);
 }
@@ -77,23 +88,25 @@ function leapAnimate(frame) {
 	var countArms = 0;
 
 	armMeshes.forEach(function(item) {
-        scene.remove(item)
-    });
+		scene.remove(item)
+	});
 	boneMeshes.forEach(function(item) {
-        scene.remove(item)
-    });
+		scene.remove(item)
+	});
 
-    sphere.material.color = new THREE.Color(0xffff00);
+	//sphere.material.color = new THREE.Color(0xffff00);
+	//sphere.position.x += 1;
+
 	for (var hand of frame.hands) {
-        let grabbed = hand.grabStrength > 0.5;
-        if (grabbed) {
-            sphere.material.color = new THREE.Color(0xff0000);
-        }
-        
+		//let grabbed = hand.grabStrength > 0.5;
+		//if (grabbed) {
+		//	sphere.material.color = new THREE.Color(0xff0000);
+		//}
+		
 		for (var finger of hand.fingers) {
 			for (var bone of finger.bones) {
 				if (countBones++ === 0)
-                    continue;
+					continue;
 
 				var boneMesh = boneMeshes[countBones] || addMesh(boneMeshes);
 				updateMesh(bone, boneMesh);
