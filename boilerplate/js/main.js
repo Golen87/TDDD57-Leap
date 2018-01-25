@@ -98,10 +98,20 @@ function leapAnimate(frame) {
 	//sphere.position.x += 1;
 
 	for (var hand of frame.hands) {
-		//let grabbed = hand.grabStrength > 0.5;
-		//if (grabbed) {
-		//	sphere.material.color = new THREE.Color(0xff0000);
-		//}
+
+		let grabbed = hand.grabStrength > 0.5;
+		if (grabbed) {
+			for (var i = spheres.length - 1; i >= 0; i--) {
+				var s = spheres[i];
+
+				if (s.checkCollision(hand.palmPosition)) {
+					s.grab();
+				}
+				if (s.isGrabbed) {
+					s.mesh.position.fromArray(hand.palmPosition);
+				}
+			}
+		}
 		
 		for (var finger of hand.fingers) {
 			for (var bone of finger.bones) {
@@ -118,6 +128,14 @@ function leapAnimate(frame) {
 		updateMesh(arm, armMesh);
 		armMesh.scale.set(arm.width / 4, arm.width / 2, arm.length);
 	}
+
+
+	/* Update spheres */
+
+	for (var i = spheres.length - 1; i >= 0; i--) {
+		spheres[i].update();
+	}
+
 
 	renderer.render(scene, camera);
 	controls.update();
