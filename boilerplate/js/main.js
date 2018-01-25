@@ -55,6 +55,19 @@ function init() {
 	s.mesh.position.set(-100, 200, -100);
 	spheres.push(s);
 
+	console.log("yolo");
+	loader = new THREE.OBJLoader();
+	loader.load(
+		'assets/models/conga.obj',
+		function(loadedMesh) {
+			scene.add(loadedMesh);
+			loadedMesh.scale.set(50, 50, 50);
+			loadedMesh.position.set(0, 50, 0);
+			loadedMesh.material = new THREE.MeshNormalMaterial();
+		}
+	);
+	console.log("swag");
+
 	window.addEventListener('resize', onWindowResize, false);
 }
 
