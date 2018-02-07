@@ -55,16 +55,22 @@ function init() {
 	s.mesh.position.set(-100, 200, -100);
 	spheres.push(s);
 
-	loader = new THREE.OBJLoader();
-	loader.load(
-		'assets/models/conga.obj',
-		function(loadedMesh) {
-			scene.add(loadedMesh);
-			loadedMesh.scale.set(50, 50, 50);
-			loadedMesh.position.set(0, 50, 0);
-			loadedMesh.material = new THREE.MeshNormalMaterial();
-		}
-	);
+	var light = new THREE.PointLight(0xffffff);
+	light.position.set(300, 300, 300);
+	scene.add(light);
+
+	var mtlLoader = new THREE.MTLLoader();
+	mtlLoader.load('assets/models/conga.mtl', function(materials) {
+		materials.preload();
+		var objLoader = new THREE.OBJLoader();
+		objLoader.setMaterials(materials);
+		objLoader.load('assets/models/conga.obj', function(object) {
+			scene.add(object);
+			object.scale.set(50, 50, 50);
+			object.position.set(0, 50, 0);
+			scene.add(object);
+		});
+	});
 
 	window.addEventListener('resize', onWindowResize, false);
 }
