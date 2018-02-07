@@ -55,7 +55,6 @@ function init() {
 	s.mesh.position.set(-100, 200, -100);
 	spheres.push(s);
 
-	console.log("yolo");
 	loader = new THREE.OBJLoader();
 	loader.load(
 		'assets/models/conga.obj',
@@ -66,7 +65,6 @@ function init() {
 			loadedMesh.material = new THREE.MeshNormalMaterial();
 		}
 	);
-	console.log("swag");
 
 	window.addEventListener('resize', onWindowResize, false);
 }
@@ -117,11 +115,11 @@ function leapAnimate(frame) {
 			for (var i = spheres.length - 1; i >= 0; i--) {
 				var s = spheres[i];
 
-				if (s.checkCollision(hand.palmPosition)) {
-					s.grab();
+				if (s.checkCollision(hand)) {
+					s.grab(hand);
 				}
 				if (s.isGrabbed) {
-					s.mesh.position.fromArray(hand.palmPosition);
+					s.followHand(hand);
 				}
 			}
 		}

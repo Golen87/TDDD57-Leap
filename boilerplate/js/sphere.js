@@ -8,6 +8,7 @@ function Sphere(scene)
 
 	this.isGrabbed = false;
 	this.grabTimer = 0;
+	this.offset = null;
 };
 
 Sphere.prototype.update = function () {
@@ -18,9 +19,9 @@ Sphere.prototype.update = function () {
 	}
 }
 
-Sphere.prototype.checkCollision = function (handPos)
+Sphere.prototype.checkCollision = function (hand)
 {
-	var dist = this.mesh.position.distanceTo(arrayToVector(handPos));
+	var dist = this.mesh.position.distanceTo(arrayToVector(hand.palmPosition));
 	return dist < 50;
 
 	// Color gradient over distance
@@ -34,18 +35,32 @@ Sphere.prototype.checkCollision = function (handPos)
 	//this.mat.color.setHex(color);
 };
 
-Sphere.prototype.grab = function ()
+Sphere.prototype.grab = function (hand)
 {
 	this.isGrabbed = true;
 	this.grabTimer = 4;
 	this.mat.color.setHex(0x0000FF);
+
+	if (this.offset === null) {
+		this.offset = new THREE.Vector3(0, 0, 0);
+		this.offset.add( arrayToVector(hand.palmPosition) );
+		this.offset.sub( this.mesh.position );
+		console.log(this.offset);
+	}
 };
+
+Sphere.prototype.followHand = function (hand) {
+	this.mesh.position.fromArray(hand.palmPosition);
+	this.mesh.position.sub(this.offset);
+}
 
 Sphere.prototype.release = function ()
 {
 	this.isGrabbed = false;
 	this.grabTimer = 0;
 	this.mat.color.setHex(0xFFFF00);
+
+	this.offset = null;
 };
 
 extend( THREE.SphereGeometry, Sphere );
