@@ -65,10 +65,14 @@ function init() {
 		var objLoader = new THREE.OBJLoader();
 		objLoader.setMaterials(materials);
 		objLoader.load('assets/models/conga.obj', function(object) {
-			scene.add(object);
 			object.scale.set(50, 50, 50);
-			object.position.set(0, 50, 0);
-			scene.add(object);
+
+			for (var i = 0; i < 4; i++) {
+				var drum = new Drum(scene);
+				drum.mesh = object.clone();
+				drum.mesh.position.set(i * 120, 0, 0);
+				scene.add(drum.mesh);
+			}
 		});
 	});
 
