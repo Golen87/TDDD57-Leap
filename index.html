@@ -1,21 +1,27 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-	<title>TDDD57</title>
-	<meta charset="utf-8">
-	<link href="web/style.css" type="text/css" rel="stylesheet" />
+	<head>
+		<meta charset=utf-8 >
+		<title>Leapmotion test</title>
+		<meta name=viewport content='width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,minimal-ui' >
+		<link href="style.css" type="text/css" rel="stylesheet" />
+	</head>
+	<body>
+		<div id="menu">
+			<h2><a id=aa href=http://jaanga.github.io/gestification-r2/template-leap-threejs/ >🛈</a></h2>
+		</div>
+		<div id=info ></div>
 
-	<!-- Phaser -->
-	<script src="//cdn.jsdelivr.net/phaser/2.6.2/phaser.min.js"></script>
+		<script src="res/three.min.js"></script>
+		<script src="res/OrbitControls.js"></script>
+		<script src="res/OBJLoader.js"></script>
+		<script src="res/MTLLoader.js"></script>
+		<script src="res/stats.min.js"></script>
+		<script src="res/leap-0.6.4.js"></script>
 
-	<!-- Script includes -->
-	<script src="js/Boot.js"></script>
-	<script src="js/Preload.js"></script>
-	<script src="js/MainMenu.js"></script>
-	<script src="js/game/Game.js"></script>
-
-	<script src="js/main.js"></script>
-</head>
-<body>
-</body>
+		<!-- Code -->
+		<script src="js/utils.js"></script>
+		<script src="js/sphere.js"></script>
+		<script src="js/main.js"></script>
+	</body>
 </html>
