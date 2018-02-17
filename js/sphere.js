@@ -6,7 +6,10 @@ function Sphere(scene)
 	//this.mesh = new THREE.Mesh(this.geo, this.mat);
 	//scene.add(this.mesh);
 
-	this.geo = new THREE.CylinderGeometry( 50, 50, 20, 32 );
+	this.radius = 50;
+	this.height = 40;
+
+	this.geo = new THREE.CylinderGeometry( this.radius, this.radius, this.height, 32 );
 	this.mat = new THREE.MeshBasicMaterial( {color: 0xffff00} );
 	this.mat.transparent = true;
 	this.mat.opacity = 0.5;
@@ -39,8 +42,19 @@ Sphere.prototype.checkCollision = function (hand)
 	//var dist = this.mesh.position.distanceTo(arrayToVector(hand.palmPosition));
 	//return dist < 50;
 
-	var dist = this.mesh.position.distanceTo(arrayToVector(hand.fingers[2].tipPosition));
-	return dist < 20;
+	var point = arrayToVector(hand.fingers[2].tipPosition);
+	var velocity = arrayToVector(hand.fingers[2].tipVelocity);
+	//point.y += velocity.y/100; Will pass through
+
+	var planePoint = point.clone();
+	planePoint.y = this.mesh.position.y;
+	var dist = this.mesh.position.distanceTo(point);
+
+	var hDiff = Math.abs(this.mesh.position.y - point.y);
+
+	return dist < this.radius
+		&& hDiff < this.height
+		&& velocity.y < -100;
 
 	// Color gradient over distance
 	//dist = Math.max(0, Math.min(1, dist/500));
