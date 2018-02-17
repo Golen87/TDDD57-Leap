@@ -6,7 +6,7 @@ function Sound(url) {
 	request.open('GET', url, true);
 	request.responseType = 'arraybuffer';
 
-	sound = this;
+	var sound = this;
 
 	request.onload = function() {
 		context.decodeAudioData(request.response, function(buffer) {
