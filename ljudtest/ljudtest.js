@@ -1,11 +1,8 @@
 var context = new AudioContext();
-var audioFrequency = 44100;
-//var audioLength = 
 var congaBuffer = null;
 
-var request = new XMLHttpRequest();
-
 function loadSound(url) {
+	var request = new XMLHttpRequest();
 	request.open('GET', url, true);
 	request.responseType = 'arraybuffer';
 
