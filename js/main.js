@@ -132,11 +132,14 @@ function leapAnimate(frame) {
 				var s = spheres[i];
 
 				if (s.checkCollision(hand)) {
+					if (!s.isGrabbed) {
+						congaSound.play();
+					}
 					s.grab(hand);
 				}
-				if (s.isGrabbed) {
-					s.followHand(hand);
-				}
+				//if (s.isGrabbed) {
+				//	s.followHand(hand);
+				//}
 			}
 		}
 		

@@ -31,7 +31,7 @@ Sphere.prototype.update = function () {
 
 	var d = new Date();
 	var n = d.getTime();
-	this.mat.opacity = 0.5-0.5*Math.sin(n/1000);
+	this.mat.opacity = 0.5-0.25*Math.sin(n/1000);
 }
 
 Sphere.prototype.checkCollision = function (hand)
@@ -55,8 +55,6 @@ Sphere.prototype.checkCollision = function (hand)
 
 Sphere.prototype.grab = function (hand)
 {
-	return;
-
 	this.isGrabbed = true;
 	this.grabTimer = 4;
 	this.mat.color.setHex(0x0000FF);
