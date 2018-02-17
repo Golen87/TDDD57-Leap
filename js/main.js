@@ -4,7 +4,7 @@ var armMeshes = [];
 var boneMeshes = [];
 var spheres = [];
 
-var stats, renderer, scene, camera, controls;
+var stats, renderer, scene, camera, controls, congaSound;
 
 init();
 Leap.loop({background: true}, leapAnimate).connect();
@@ -75,6 +75,8 @@ function init() {
 			}
 		});
 	});
+
+	congaSound = new Sound('assets/sounds/99735__menegass__conga-2.wav');
 
 	window.addEventListener('resize', onWindowResize, false);
 }
