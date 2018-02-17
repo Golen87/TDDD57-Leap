@@ -122,8 +122,10 @@ function leapAnimate(frame) {
 
 	for (var hand of frame.hands) {
 
+		//hand.fingers[2].tipPosition
+
 		let grabbed = hand.grabStrength > 0.5;
-		if (grabbed) {
+		if (grabbed || true) {
 			for (var i = spheres.length - 1; i >= 0; i--) {
 				var s = spheres[i];
 
