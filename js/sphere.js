@@ -55,7 +55,7 @@ Sphere.prototype.checkCollision = function (hand)
 		if (!this.isGrabbed) {
 			var fac = generalSmoothStep(10, dist/this.radius);
 			console.log(dist/this.radius, fac);
-			congaSound.play(-500 + fac*500);
+			congaSounds[0].play(-500 + fac*500);
 		}
 		this.grab(hand);
 	}
