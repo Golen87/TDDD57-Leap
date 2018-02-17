@@ -57,9 +57,12 @@ function init() {
 	s.mesh.position.set(-100, 200, -100);
 	spheres.push(s);
 
-	var light = new THREE.PointLight(0xffffff);
-	light.position.set(300, 300, 300);
-	scene.add(light);
+	var pLight = new THREE.PointLight(0xffffff);
+	pLight.position.set(300, 300, 300);
+	scene.add(pLight);
+
+	var aLight = new THREE.AmbientLight( 0xAAAAAA ); // soft white light
+	scene.add( aLight );
 
 	var mtlLoader = new THREE.MTLLoader();
 	mtlLoader.load('assets/models/conga.mtl', function(materials) {
