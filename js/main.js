@@ -75,10 +75,11 @@ function init() {
 	var aLight = new THREE.AmbientLight( 0xAAAAAA ); // soft white light
 	scene.add( aLight );
 
+	// Load congas
 	var mtlLoader = new THREE.MTLLoader();
 	mtlLoader.load('assets/models/conga.mtl', function(materials) {
 		materials.preload();
-		var objLoader = new THREE.OBJLoader();
+		let objLoader = new THREE.OBJLoader();
 		objLoader.setMaterials(materials);
 		objLoader.load('assets/models/conga.obj', function(object) {
 			object.scale.set(50, 50, 50);
@@ -94,6 +95,20 @@ function init() {
 				drum.hitArea.mesh.position.copy(pos);
 				drum.hitArea.mesh.position.y += 200;
 			}
+		});
+	});
+
+	// Load bongos
+	mtlLoader.load('assets/models/bongos.mtl', function(materials) {
+		materials.preload();
+		let objLoader = new THREE.OBJLoader();
+		objLoader.setMaterials(materials);
+		objLoader.load('assets/models/bongos.obj', function(object) {
+			object.scale.set(50, 50, 50);
+			var drum = new Drum(scene);
+			drum.mesh = object.clone();
+			drum.mesh.position.set(200, 300, 120);
+			scene.add(drum.mesh);
 		});
 	});
 
