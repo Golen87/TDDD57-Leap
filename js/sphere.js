@@ -6,7 +6,7 @@ function Sphere(scene)
 	//this.mesh = new THREE.Mesh(this.geo, this.mat);
 	//scene.add(this.mesh);
 
-	this.radius = 50;
+	this.radius = 60;
 	this.height = 40;
 
 	this.geo = new THREE.CylinderGeometry( this.radius, this.radius, this.height, 32 );
@@ -15,10 +15,6 @@ function Sphere(scene)
 	this.mat.opacity = 0.5;
 	this.mesh = new THREE.Mesh( this.geo, this.mat );
 	scene.add( this.mesh );
-
-	console.log(this.geo)
-	console.log(this.mat)
-	console.log(this.mesh)
 
 	this.isGrabbed = false;
 	this.grabTimer = 0;
@@ -48,13 +44,21 @@ Sphere.prototype.checkCollision = function (hand)
 
 	var planePoint = point.clone();
 	planePoint.y = this.mesh.position.y;
-	var dist = this.mesh.position.distanceTo(point);
+	var dist = this.mesh.position.distanceTo(planePoint);
 
 	var hDiff = Math.abs(this.mesh.position.y - point.y);
 
-	return dist < this.radius
-		&& hDiff < this.height
-		&& velocity.y < -100;
+	if (dist < this.radius &&
+		hDiff < this.height &&
+		velocity.y < -100)
+	{
+		if (!this.isGrabbed) {
+			var fac = generalSmoothStep(10, dist/this.radius);
+			console.log(dist/this.radius, fac);
+			congaSound.play(-500 + fac*500);
+		}
+		this.grab(hand);
+	}
 
 	// Color gradient over distance
 	//dist = Math.max(0, Math.min(1, dist/500));
@@ -77,7 +81,6 @@ Sphere.prototype.grab = function (hand)
 		this.offset = new THREE.Vector3(0, 0, 0);
 		this.offset.add( arrayToVector(hand.palmPosition) );
 		this.offset.sub( this.mesh.position );
-		console.log(this.offset);
 	}
 };
 
