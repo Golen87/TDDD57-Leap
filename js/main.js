@@ -2,7 +2,7 @@
 var baseBoneRotation = (new THREE.Quaternion).setFromEuler(new THREE.Euler(0, 0, Math.PI / 2));
 var armMeshes = [];
 var boneMeshes = [];
-var spheres = [];
+var drums = [];
 var congaSounds = [];
 
 var congaFiles = [
@@ -51,19 +51,22 @@ function init() {
 	mesh.position.set(0, -10, 0);
 	scene.add(mesh);
 
-	/* Spheres */
+	/* Drums */
 
-	var s = new Sphere(scene);
-	s.mesh.position.set(0, 200, 0);
-	spheres.push(s);
+	var positions = [
+		new THREE.Vector3(-90, -30, 20),
+		new THREE.Vector3(-60,  30, -100),
+		new THREE.Vector3( 60,  30, -100),
+		new THREE.Vector3( 90, -30, 20),
+	];
 
-	var s = new Sphere(scene);
-	s.mesh.position.set(100, 300, 0);
-	spheres.push(s);
-
-	var s = new Sphere(scene);
-	s.mesh.position.set(-100, 200, -100);
-	spheres.push(s);
+	//for (var i=0; i<positions.length; i++) {
+	//	var pos = positions[i];
+	//	var s = new Sphere(scene, i);
+	//	s.mesh.position.copy(pos);
+	//	s.mesh.position.y += 200;
+	//	drums.push(s);
+	//}
 
 	var pLight = new THREE.PointLight(0xffffff);
 	pLight.position.set(300, 300, 300);
@@ -80,11 +83,16 @@ function init() {
 		objLoader.load('assets/models/conga.obj', function(object) {
 			object.scale.set(50, 50, 50);
 
-			for (var i = 0; i < 4; i++) {
-				var drum = new Drum(scene);
+			for (var i = 0; i < positions.length; i++) {
+				var pos = positions[i];
+				var drum = new Drum(scene, i);
 				drum.mesh = object.clone();
-				drum.mesh.position.set(i * 120, 0, 0);
+				drum.mesh.position.copy(pos);
 				scene.add(drum.mesh);
+				drums.push(drum)
+
+				drum.hitArea.mesh.position.copy(pos);
+				drum.hitArea.mesh.position.y += 200;
 			}
 		});
 	});
@@ -137,14 +145,10 @@ function leapAnimate(frame) {
 
 	for (var hand of frame.hands) {
 
-		//hand.fingers[2].tipPosition
+		//let grabbed = hand.grabStrength > 0.5;
 
-		let grabbed = hand.grabStrength > 0.5;
-		if (grabbed || true) {
-			for (var i = spheres.length - 1; i >= 0; i--) {
-				var s = spheres[i];
-				s.checkCollision(hand);
-			}
+		for (var i = 0; i < drums.length; i++) {
+			drums[i].checkCollision(hand);
 		}
 		
 		for (var finger of hand.fingers) {
@@ -164,10 +168,10 @@ function leapAnimate(frame) {
 	}
 
 
-	/* Update spheres */
+	/* Update drums */
 
-	for (var i = spheres.length - 1; i >= 0; i--) {
-		spheres[i].update();
+	for (var i = 0; i < drums.length; i++) {
+		drums[i].update();
 	}
 
 
