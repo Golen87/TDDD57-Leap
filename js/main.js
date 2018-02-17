@@ -19,10 +19,12 @@ function init() {
 	document.body.appendChild(renderer.domElement);
 
 	camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 5000);
-	camera.position.set(-500, 500, 500);
+	camera.position.set(0, 700, 500);
 
 	controls = new THREE.OrbitControls(camera, renderer.domElement);
 	controls.maxDistance = 1000;
+
+	controls.target.set(0, 200, 0);
 
 	scene = new THREE.Scene();
 
