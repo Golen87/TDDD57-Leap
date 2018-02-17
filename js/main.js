@@ -3,8 +3,16 @@ var baseBoneRotation = (new THREE.Quaternion).setFromEuler(new THREE.Euler(0, 0,
 var armMeshes = [];
 var boneMeshes = [];
 var spheres = [];
+var congaSounds = [];
 
-var stats, renderer, scene, camera, controls, congaSound;
+var congaFiles = [
+	'assets/sounds/99735__menegass__conga-2.wav',
+	'assets/sounds/121095__thirsk__conga1.wav',
+	'assets/sounds/121104__thirsk__conga3.wav',
+	'assets/sounds/121096__thirsk__conga2.wav'
+];
+
+var stats, renderer, scene, camera, controls;
 
 init();
 Leap.loop({background: true}, leapAnimate).connect();
@@ -78,7 +86,9 @@ function init() {
 		});
 	});
 
-	congaSound = new Sound('assets/sounds/99735__menegass__conga-2.wav');
+	for (var soundFile of congaFiles) {
+		congaSounds.push(new Sound(soundFile));
+	}
 
 	window.addEventListener('resize', onWindowResize, false);
 }
@@ -133,7 +143,7 @@ function leapAnimate(frame) {
 
 				if (s.checkCollision(hand)) {
 					if (!s.isGrabbed) {
-						congaSound.play();
+						congaSounds[0].play();
 					}
 					s.grab(hand);
 				}
