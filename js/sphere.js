@@ -1,10 +1,21 @@
 
 function Sphere(scene)
 {
-	this.geo = new THREE.SphereGeometry(25, 32, 32);
-	this.mat = new THREE.MeshBasicMaterial({ color: 0xffff00 });
-	this.mesh = new THREE.Mesh(this.geo, this.mat);
-	scene.add(this.mesh);
+	//this.geo = new THREE.SphereGeometry(25, 32, 32);
+	//this.mat = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+	//this.mesh = new THREE.Mesh(this.geo, this.mat);
+	//scene.add(this.mesh);
+
+	this.geo = new THREE.CylinderGeometry( 50, 50, 20, 32 );
+	this.mat = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+	this.mat.transparent = true;
+	this.mat.opacity = 0.5;
+	this.mesh = new THREE.Mesh( this.geo, this.mat );
+	scene.add( this.mesh );
+
+	console.log(this.geo)
+	console.log(this.mat)
+	console.log(this.mesh)
 
 	this.isGrabbed = false;
 	this.grabTimer = 0;
@@ -17,12 +28,19 @@ Sphere.prototype.update = function () {
 	if (this.grabTimer < 0 && this.isGrabbed) {
 		this.release()
 	}
+
+	var d = new Date();
+	var n = d.getTime();
+	this.mat.opacity = 0.5-0.25*Math.sin(n/1000);
 }
 
 Sphere.prototype.checkCollision = function (hand)
 {
-	var dist = this.mesh.position.distanceTo(arrayToVector(hand.palmPosition));
-	return dist < 50;
+	//var dist = this.mesh.position.distanceTo(arrayToVector(hand.palmPosition));
+	//return dist < 50;
+
+	var dist = this.mesh.position.distanceTo(arrayToVector(hand.fingers[2].tipPosition));
+	return dist < 20;
 
 	// Color gradient over distance
 	//dist = Math.max(0, Math.min(1, dist/500));
