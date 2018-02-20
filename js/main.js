@@ -137,6 +137,27 @@ function init() {
 
 	sidetapSound = new Sound('assets/sounds/99863__menegass__cngad.wav');
 
+	var loader = new THREE.FontLoader();
+
+	loader.load( 'assets/fonts/Super Mario 256_Regular.json', function ( font ) {
+		var textGeo = new THREE.TextGeometry( 'Hello three.js!', {
+			font: font,
+			size: 80,
+			height: 50,
+			curveSegments: 12,
+			bevelEnabled: true,
+			bevelThickness: 10,
+			bevelSize: 5,
+			bevelSegments: 8
+		} );
+		var color = new THREE.Color();
+		color.setRGB(255, 0, 0);
+		var textMaterial = new THREE.MeshNormalMaterial({ color: color });
+		var text = new THREE.Mesh(textGeo , textMaterial);
+		text.position.set(-500, 200, -300);
+		scene.add(text);
+	} );
+
 	window.addEventListener('resize', onWindowResize, false);
 }
 
