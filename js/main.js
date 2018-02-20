@@ -56,10 +56,10 @@ function init() {
 	/* Drums */
 
 	var positions = [
-		new THREE.Vector3(-90, -30, 20),
-		new THREE.Vector3(-60,  30, -100),
-		new THREE.Vector3( 60,  30, -100),
-		new THREE.Vector3( 90, -30, 20),
+		new THREE.Vector3(-150, -30, -28),
+		new THREE.Vector3(-58,  30, -100),
+		new THREE.Vector3( 58,  30, -100),
+		new THREE.Vector3( 150, -30, -28),
 	];
 
 	//for (var i=0; i<positions.length; i++) {
@@ -94,7 +94,9 @@ function init() {
 				scene.add(drum.mesh);
 				drums.push(drum)
 
-				var area = new HitArea(scene, i, pos);
+				var area = new HitArea(scene, i, 56);
+				area.mesh.position.copy(pos);
+				area.mesh.position.y += 198;
 				drum.addHitArea(area);
 			}
 		});
@@ -107,10 +109,25 @@ function init() {
 		objLoader.setMaterials(materials);
 		objLoader.load('assets/models/bongos.obj', function(object) {
 			object.scale.set(50, 50, 50);
+
+			var pos = new THREE.Vector3(0, 100, 40);
 			var drum = new Drum(scene);
 			drum.mesh = object.clone();
-			drum.mesh.position.set(200, 300, 120);
+			drum.mesh.position.copy(pos);
 			scene.add(drum.mesh);
+			drums.push(drum);
+
+			var area = new HitArea(scene, 0, 53);
+			area.mesh.position.copy(pos);
+			area.mesh.position.y += 55;
+			area.mesh.position.x -= 59;
+			drum.addHitArea(area);
+
+			var area = new HitArea(scene, 0, 43);
+			area.mesh.position.copy(pos);
+			area.mesh.position.y += 55;
+			area.mesh.position.x += 65;
+			drum.addHitArea(area);
 		});
 	});
 
