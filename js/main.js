@@ -92,8 +92,8 @@ function init() {
 				scene.add(drum.mesh);
 				drums.push(drum)
 
-				drum.hitArea.mesh.position.copy(pos);
-				drum.hitArea.mesh.position.y += 200;
+				var area = new HitArea(scene, i, pos);
+				drum.addHitArea(area);
 			}
 		});
 	});
