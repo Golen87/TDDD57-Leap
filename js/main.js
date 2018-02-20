@@ -16,7 +16,7 @@ var bongoFiles = [
 	'assets/sounds/99751__menegass__bongo1.wav',
 	'assets/sounds/99752__menegass__bongo2.wav',
 	'assets/sounds/99753__menegass__bongo3.wav',
-	'assets/sounds/99754__menegass__bongo4.wav
+	'assets/sounds/99754__menegass__bongo4.wav'
 ];
 
 var sidetapSound;
