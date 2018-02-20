@@ -4,6 +4,7 @@ var armMeshes = [];
 var boneMeshes = [];
 var drums = [];
 var congaSounds = [];
+var bongoSounds = [];
 
 var congaFiles = [
 	'assets/sounds/99735__menegass__conga-2.wav',
@@ -123,6 +124,10 @@ function init() {
 
 	for (var soundFile of congaFiles) {
 		congaSounds.push(new Sound(soundFile));
+	}
+
+	for (var soundFile of bongoFiles) {
+		bongoSounds.push(new Sound(soundFile));
 	}
 
 	sidetapSound = new Sound('assets/sounds/99863__menegass__cngad.wav');
