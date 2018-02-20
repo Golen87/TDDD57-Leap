@@ -20,7 +20,7 @@ var bongoFiles = [
 	'assets/sounds/99754__menegass__bongo4.wav'
 ];
 
-var sidetapSound;
+var sidetapSound, note;
 
 var stats, renderer, scene, camera, controls;
 
@@ -149,6 +149,9 @@ function init() {
 
 	sidetapSound = new Sound('assets/sounds/99863__menegass__cngad.wav');
 
+	note = new Note(scene, 40);
+	note.mesh.position.set(0, 0, -100);
+
 	var loader = new THREE.FontLoader();
 
 	loader.load( 'assets/fonts/Super Mario 256_Regular.json', function ( font ) {
@@ -243,6 +246,7 @@ function leapAnimate(frame) {
 		drums[i].update();
 	}
 
+	note.update();
 
 	renderer.render(scene, camera);
 	controls.update();
