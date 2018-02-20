@@ -1,9 +1,9 @@
 
-function HitArea(scene, id, position)
+function HitArea(scene, id, radius)
 {
 	this.id = id;
 
-	this.radius = 56;
+	this.radius = radius;
 	this.height = 40;
 
 	this.isHit = false;
@@ -14,9 +14,6 @@ function HitArea(scene, id, position)
 	this.mat.transparent = true;
 	this.mesh = new THREE.Mesh( this.geo, this.mat );
 	scene.add( this.mesh );
-
-	this.mesh.position.copy(position);
-	this.mesh.position.y += 200;
 };
 
 HitArea.prototype.update = function () {

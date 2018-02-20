@@ -64,10 +64,10 @@ function init() {
 	/* Drums */
 
 	var positions = [
-		new THREE.Vector3(-90, -30, 20),
-		new THREE.Vector3(-60,  30, -100),
-		new THREE.Vector3( 60,  30, -100),
-		new THREE.Vector3( 90, -30, 20),
+		new THREE.Vector3(-150, -30, -28),
+		new THREE.Vector3(-58,  30, -100),
+		new THREE.Vector3( 58,  30, -100),
+		new THREE.Vector3( 150, -30, -28),
 	];
 
 	//for (var i=0; i<positions.length; i++) {
@@ -102,7 +102,9 @@ function init() {
 				scene.add(drum.mesh);
 				drums.push(drum)
 
-				var area = new HitArea(scene, i, pos);
+				var area = new HitArea(scene, i, 56);
+				area.mesh.position.copy(pos);
+				area.mesh.position.y += 198;
 				drum.addHitArea(area);
 			}
 		});
@@ -115,10 +117,25 @@ function init() {
 		objLoader.setMaterials(materials);
 		objLoader.load('assets/models/bongos.obj', function(object) {
 			object.scale.set(50, 50, 50);
+
+			var pos = new THREE.Vector3(0, 100, 40);
 			var drum = new Drum(scene);
 			drum.mesh = object.clone();
-			drum.mesh.position.set(200, 300, 120);
+			drum.mesh.position.copy(pos);
 			scene.add(drum.mesh);
+			drums.push(drum);
+
+			var area = new HitArea(scene, 0, 53);
+			area.mesh.position.copy(pos);
+			area.mesh.position.y += 55;
+			area.mesh.position.x -= 59;
+			drum.addHitArea(area);
+
+			var area = new HitArea(scene, 0, 43);
+			area.mesh.position.copy(pos);
+			area.mesh.position.y += 55;
+			area.mesh.position.x += 65;
+			drum.addHitArea(area);
 		});
 	});
 
@@ -131,6 +148,27 @@ function init() {
 	}
 
 	sidetapSound = new Sound('assets/sounds/99863__menegass__cngad.wav');
+
+	var loader = new THREE.FontLoader();
+
+	loader.load( 'assets/fonts/Super Mario 256_Regular.json', function ( font ) {
+		var textGeo = new THREE.TextGeometry( 'Hello three.js!', {
+			font: font,
+			size: 80,
+			height: 50,
+			curveSegments: 12,
+			bevelEnabled: true,
+			bevelThickness: 10,
+			bevelSize: 5,
+			bevelSegments: 8
+		} );
+		var color = new THREE.Color();
+		color.setRGB(255, 0, 0);
+		var textMaterial = new THREE.MeshNormalMaterial({ color: color });
+		var text = new THREE.Mesh(textGeo , textMaterial);
+		text.position.set(-500, 200, -300);
+		scene.add(text);
+	} );
 
 	window.addEventListener('resize', onWindowResize, false);
 }
