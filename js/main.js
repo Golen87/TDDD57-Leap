@@ -7,10 +7,12 @@ var congaSounds = [];
 
 var congaFiles = [
 	'assets/sounds/99735__menegass__conga-2.wav',
-	'assets/sounds/121095__thirsk__conga1.wav',
-	'assets/sounds/121104__thirsk__conga3.wav',
-	'assets/sounds/121096__thirsk__conga2.wav'
+	'assets/sounds/75837__rossf__lm1-conga-hi.wav',
+	'assets/sounds/99864__menegass__cngah.wav',
+	'assets/sounds/99865__menegass__cngal.wav'
 ];
+
+var sidetapSound;
 
 var stats, renderer, scene, camera, controls;
 
@@ -115,6 +117,8 @@ function init() {
 	for (var soundFile of congaFiles) {
 		congaSounds.push(new Sound(soundFile));
 	}
+
+	sidetapSound = new Sound('assets/sounds/99863__menegass__cngad.wav');
 
 	window.addEventListener('resize', onWindowResize, false);
 }
