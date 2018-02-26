@@ -83,7 +83,7 @@ function init() {
 
 
 	var pLight = new THREE.SpotLight(0xffffff);
-	pLight.position.set(0, 500, 600);
+	pLight.position.set(0, 1000, 100);
 	pLight.castShadow = true;
 	pLight.shadow.camera.fov = 30;
 	pLight.shadow.camera.far = 6000;
@@ -104,6 +104,7 @@ function init() {
 
 	// Load congas
 	var mtlLoader = new THREE.MTLLoader();
+	mtlLoader.setTexturePath('assets/textures/');
 	mtlLoader.load('assets/models/conga.mtl', function(materials) {
 		materials.preload();
 		let objLoader = new THREE.OBJLoader();
