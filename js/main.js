@@ -34,6 +34,9 @@ function init() {
 
 	renderer = new THREE.WebGLRenderer({ alpha: 1, antialias: true, clearColor: 0xffffff });
 	renderer.setSize(window.innerWidth, window.innerHeight);
+	renderer.shadowMap.enabled = true;
+	renderer.shadowMap.type = THREE.PCFShadowMap
+
 	document.body.appendChild(renderer.domElement);
 
 	camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 5000);
@@ -58,6 +61,8 @@ function init() {
 	var geometry = new THREE.BoxGeometry(300, 20, 300);
 	var material = new THREE.MeshNormalMaterial();
 	var mesh = new THREE.Mesh(geometry, material);
+	mesh.castShadow = true;
+	mesh.receiveShadow = true;
 	mesh.position.set(0, -10, 0);
 	scene.add(mesh);
 
@@ -79,8 +84,18 @@ function init() {
 	//	drums.push(s);
 	//}
 
-	var pLight = new THREE.PointLight(0xffffff);
-	pLight.position.set(300, 300, 300);
+	var pLight = new THREE.SpotLight(0xffffff);
+	pLight.position.set(0, 100, 200);
+	pLight.castShadow = true;
+	var helper = new THREE.CameraHelper( pLight.shadow.camera );
+	scene.add( helper );
+	scene.add(pLight);
+	pLight.shadow.camera.fov = 50;
+	console.log(pLight)
+
+	var pLight = new THREE.SpotLight(0xffffff);
+	pLight.position.set(-100, 500, 100);
+	pLight.castShadow = true;
 	scene.add(pLight);
 
 	var aLight = new THREE.AmbientLight( 0xAAAAAA ); // soft white light
@@ -94,12 +109,16 @@ function init() {
 		objLoader.setMaterials(materials);
 		objLoader.load('assets/models/conga.obj', function(object) {
 			object.scale.set(50*scale, 50*scale, 50*scale);
+			object.castShadow = true;
+			object.receiveShadow = true;
 
 			for (var i = 0; i < positions.length; i++) {
 				var pos = positions[i];
 				var drum = new Drum(scene, i);
 				drum.mesh = object.clone();
 				drum.mesh.position.copy(pos);
+				drum.mesh.castShadow = true;
+				drum.mesh.receiveShadow = true;
 				scene.add(drum.mesh);
 				drums.push(drum)
 
@@ -118,6 +137,8 @@ function init() {
 		objLoader.setMaterials(materials);
 		objLoader.load('assets/models/bongos.obj', function(object) {
 			object.scale.set(50*scale, 50*scale, 50*scale);
+			object.castShadow = true;
+			object.receiveShadow = true;
 
 			var pos = new THREE.Vector3(0, 100*scale, 40*scale);
 			var drum = new Drum(scene);
@@ -210,6 +231,8 @@ function addMesh(meshes) {
 	var geometry = new THREE.BoxGeometry(1, 1, 1);
 	var material = new THREE.MeshNormalMaterial();
 	var mesh = new THREE.Mesh(geometry, material);
+	mesh.castShadow = true;
+	mesh.receiveShadow = true;
 	meshes.push(mesh);
 
 	return mesh;
