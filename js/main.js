@@ -52,6 +52,16 @@ function init() {
 
 	scene = new THREE.Scene();
 
+	var geometry = new THREE.PlaneBufferGeometry( 100, 100 );
+	var planeMaterial = new THREE.MeshPhongMaterial( { color: 0xffdd99 } );
+	var ground = new THREE.Mesh( geometry, planeMaterial );
+	ground.position.set( 0, -100, 0 );
+	ground.rotation.x = - Math.PI / 2;
+	ground.scale.set( 100, 100, 100 );
+	ground.castShadow = false;
+	ground.receiveShadow = true;
+	scene.add( ground );
+
 
 	/* Helpers */
 
@@ -88,18 +98,21 @@ function init() {
 	//}
 
 	var pLight = new THREE.SpotLight(0xffffff);
-	pLight.position.set(0, 100, 200);
+	pLight.position.set(0, 500, 600);
 	pLight.castShadow = true;
+	pLight.shadow.camera.fov = 30;
+	pLight.shadow.camera.far = 6000;
+	pLight.shadow.mapSize.width = 2048;
+	pLight.shadow.mapSize.height = 2048;
+	scene.add(pLight);
+
 	var helper = new THREE.CameraHelper( pLight.shadow.camera );
 	scene.add( helper );
-	scene.add(pLight);
-	pLight.shadow.camera.fov = 50;
-	console.log(pLight)
 
-	var pLight = new THREE.SpotLight(0xffffff);
-	pLight.position.set(-100, 500, 100);
-	pLight.castShadow = true;
-	scene.add(pLight);
+	// var pLight = new THREE.SpotLight(0xffffff);
+	// pLight.position.set(-100, 500, 100);
+	// pLight.castShadow = true;
+	// scene.add(pLight);
 
 	var aLight = new THREE.AmbientLight( 0xAAAAAA ); // soft white light
 	scene.add( aLight );
@@ -112,16 +125,19 @@ function init() {
 		objLoader.setMaterials(materials);
 		objLoader.load('assets/models/conga.obj', function(object) {
 			object.scale.set(50*scale, 50*scale, 50*scale);
-			object.castShadow = true;
-			object.receiveShadow = true;
+
+			object.traverse(function(child) {
+				if (child instanceof THREE.Mesh) {
+					child.castShadow = true;
+					child.receiveShadow = true;
+				}
+			});
 
 			for (var i = 0; i < positions.length; i++) {
 				var pos = positions[i];
 				var drum = new Drum(scene, i);
 				drum.mesh = object.clone();
 				drum.mesh.position.copy(pos);
-				drum.mesh.castShadow = true;
-				drum.mesh.receiveShadow = true;
 				scene.add(drum.mesh);
 				drums.push(drum)
 
@@ -140,8 +156,12 @@ function init() {
 		objLoader.setMaterials(materials);
 		objLoader.load('assets/models/bongos.obj', function(object) {
 			object.scale.set(50*scale, 50*scale, 50*scale);
-			object.castShadow = true;
-			object.receiveShadow = true;
+			object.traverse(function(child) {
+				if (child instanceof THREE.Mesh) {
+					child.castShadow = true;
+					child.receiveShadow = true;
+				}
+			});
 
 			var pos = new THREE.Vector3(0, 100*scale, 40*scale);
 			var drum = new Drum(scene);
