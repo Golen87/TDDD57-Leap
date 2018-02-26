@@ -6,6 +6,7 @@ var drums = [];
 
 
 var audioManager = new AudioManager();
+var textManager = new TextManager();
 
 var note;
 
@@ -38,6 +39,8 @@ function init() {
 
 
 	audioManager.init(camera);
+	textManager.init(scene);
+
 
 	/* Helpers */
 
@@ -73,7 +76,6 @@ function init() {
 	scene.add( helper );
 	scene.add(pLight);
 	pLight.shadow.camera.fov = 50;
-	console.log(pLight)
 
 	var pLight = new THREE.SpotLight(0xffffff);
 	pLight.position.set(-100, 500, 100);
@@ -145,28 +147,6 @@ function init() {
 
 	note = new Note(scene, 40);
 	note.mesh.position.set(0, 0, -100);
-
-	var loader = new THREE.FontLoader();
-
-	loader.load( 'assets/fonts/Super Mario 256_Regular.json', function ( font ) {
-		var string = 'TDDD57';
-		var textGeo = new THREE.TextGeometry( string, {
-			font: font,
-			size: 80,
-			height: 50,
-			curveSegments: 12,
-			bevelEnabled: true,
-			bevelThickness: 10,
-			bevelSize: 5,
-			bevelSegments: 8
-		} );
-		var color = new THREE.Color();
-		color.setRGB(255, 0, 0);
-		var textMaterial = new THREE.MeshNormalMaterial(); //{ color: color }
-		var text = new THREE.Mesh(textGeo , textMaterial);
-		text.position.set(-string.length/2*80*scale, 200*scale, -300*scale);
-		scene.add(text);
-	} );
 
 	window.addEventListener('resize', onWindowResize, false);
 }
