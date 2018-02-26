@@ -51,10 +51,10 @@ HitArea.prototype.checkPointCollision = function (point, velocity)
 		hDiff < this.height &&
 		velocity.y < -100)
 	{
-		if (!this.isHit) {
-			var distFac = generalSmoothStep(10, Math.pow(dist/this.radius, 2));
-			var speedFac = Math.min(1000, -velocity.y - 100) / 1000;
+		var distFac = generalSmoothStep(10, Math.pow(dist/this.radius, 2));
+		var speedFac = Math.min(1000, -velocity.y - 100) / 1000;
 
+		if (!this.isHit) {
 			var volume = 0.7 + 1.0 * speedFac - 1.0 * distFac;
 			var volumeSide = 1.0 * distFac + 0.5 * speedFac;
 			var pitch = 1.0 + 0.5 * distFac;
@@ -63,8 +63,10 @@ HitArea.prototype.checkPointCollision = function (point, velocity)
 
 			audioManager.play(this.sound, volume, pitch);
 			audioManager.play('side', volumeSide, pitchSide);
+
+			this.owner.hit();
 		}
-		this.hit();
+		this.hit(speedFac);
 	}
 
 	// Color gradient over distance
@@ -78,7 +80,7 @@ HitArea.prototype.checkPointCollision = function (point, velocity)
 	//this.mat.color.setHex(color);
 };
 
-HitArea.prototype.hit = function () {
+HitArea.prototype.hit = function (speedFac) {
 	this.isHit = true;
 	this.hitTimer = 4;
 
