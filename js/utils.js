@@ -56,3 +56,7 @@ function clamp(x, lowerlimit, upperlimit) {
     x = upperlimit;
   return x;
 }
+
+Array.prototype.choice = function() {
+	return this[Math.floor(Math.random()*this.length)];
+};

@@ -3,24 +3,12 @@ var baseBoneRotation = (new THREE.Quaternion).setFromEuler(new THREE.Euler(0, 0,
 var armMeshes = [];
 var boneMeshes = [];
 var drums = [];
-var congaSounds = [];
-var bongoSounds = [];
 
-var congaFiles = [
-	'assets/sounds/99735__menegass__conga-2.wav',
-	'assets/sounds/75837__rossf__lm1-conga-hi.wav',
-	'assets/sounds/99864__menegass__cngah.wav',
-	'assets/sounds/99865__menegass__cngal.wav'
-];
 
-var bongoFiles = [
-	'assets/sounds/99751__menegass__bongo1.wav',
-	'assets/sounds/99752__menegass__bongo2.wav',
-	'assets/sounds/99753__menegass__bongo3.wav',
-	'assets/sounds/99754__menegass__bongo4.wav'
-];
+var audioManager = new AudioManager();
+var textManager = new TextManager();
 
-var sidetapSound, note;
+var note;
 
 var stats, renderer, scene, camera, controls;
 
@@ -63,6 +51,10 @@ function init() {
 	scene.add( ground );
 
 
+	audioManager.init(camera);
+	textManager.init(scene);
+
+
 	/* Helpers */
 
 	var gridHelper = new THREE.GridHelper(150, 10);
@@ -89,13 +81,6 @@ function init() {
 		new THREE.Vector3( 150*scale, -30*scale, -28*scale),
 	];
 
-	//for (var i=0; i<positions.length; i++) {
-	//	var pos = positions[i];
-	//	var s = new Sphere(scene, i);
-	//	s.mesh.position.copy(pos);
-	//	s.mesh.position.y += 200;
-	//	drums.push(s);
-	//}
 
 	var pLight = new THREE.SpotLight(0xffffff);
 	pLight.position.set(0, 1000, 100);
@@ -185,61 +170,8 @@ function init() {
 		});
 	});
 
-	for (var soundFile of congaFiles) {
-		congaSounds.push(new Sound(soundFile));
-	}
-
-	for (var soundFile of bongoFiles) {
-		bongoSounds.push(new Sound(soundFile));
-	}
-
-	sidetapSound = new Sound('assets/sounds/99863__menegass__cngad.wav');
-
 	note = new Note(scene, 40);
 	note.mesh.position.set(0, 0, -100);
-
-	//var music = new Audio('assets/music/Donkey Kong Country OST 8 Bonus Room Blitz.mp3');
-	//music.play();
-
-	// create an AudioListener and add it to the camera
-	var listener = new THREE.AudioListener();
-	camera.add( listener );
-
-	// create a global audio source
-	var sound = new THREE.Audio( listener );
-
-	//var json = require('./data.json');
-	//console.log(json);
-
-	var audioLoader = new THREE.AudioLoader();
-	audioLoader.load( 'assets/music/Donkey Kong Country OST 8 Bonus Room Blitz.mp3', function( buffer ) {
-		sound.setBuffer( buffer );
-		sound.setLoop( true );
-		sound.setVolume( 0.5 );
-		//sound.play();
-	});
-
-	var loader = new THREE.FontLoader();
-
-	loader.load( 'assets/fonts/Super Mario 256_Regular.json', function ( font ) {
-		var string = 'TDDD57';
-		var textGeo = new THREE.TextGeometry( string, {
-			font: font,
-			size: 80,
-			height: 50,
-			curveSegments: 12,
-			bevelEnabled: true,
-			bevelThickness: 10,
-			bevelSize: 5,
-			bevelSegments: 8
-		} );
-		var color = new THREE.Color();
-		color.setRGB(255, 0, 0);
-		var textMaterial = new THREE.MeshNormalMaterial(); //{ color: color }
-		var text = new THREE.Mesh(textGeo , textMaterial);
-		text.position.set(-string.length/2*80*scale, 200*scale, -300*scale);
-		scene.add(text);
-	} );
 
 	window.addEventListener('resize', onWindowResize, false);
 }
