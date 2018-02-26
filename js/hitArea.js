@@ -28,10 +28,18 @@ HitArea.prototype.update = function () {
 
 HitArea.prototype.checkCollision = function (hand)
 {
-	var point = arrayToVector(hand.fingers[2].tipPosition);
-	var velocity = arrayToVector(hand.fingers[2].tipVelocity);
-	//point.y += velocity.y/100; Will pass through
+	for (var i = 0; i < hand.fingers.length; i++) {
+		if (hand.fingers[i]) {
+			var point = arrayToVector(hand.fingers[i].tipPosition);
+			var velocity = arrayToVector(hand.fingers[i].tipVelocity);
+			//point.y += velocity.y/100; Will pass through
+			this.checkPointCollision(point, velocity);
+		}
+	}
+};
 
+HitArea.prototype.checkPointCollision = function (point, velocity)
+{
 	var planePoint = point.clone();
 	planePoint.y = this.mesh.position.y;
 	var dist = this.mesh.position.distanceTo(planePoint);
@@ -44,9 +52,10 @@ HitArea.prototype.checkCollision = function (hand)
 	{
 		if (!this.isHit) {
 			var fac = generalSmoothStep(10, Math.pow(dist/this.radius, 2));
+			sidetapSound.play();
 			congaSounds[this.id].play(0 + fac*700);
 		}
-		this.hit(hand);
+		this.hit();
 	}
 
 	// Color gradient over distance
@@ -60,7 +69,7 @@ HitArea.prototype.checkCollision = function (hand)
 	//this.mat.color.setHex(color);
 };
 
-HitArea.prototype.hit = function (hand) {
+HitArea.prototype.hit = function () {
 	this.isHit = true;
 	this.hitTimer = 4;
 
