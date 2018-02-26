@@ -25,7 +25,10 @@ var sidetapSound, note;
 var stats, renderer, scene, camera, controls;
 
 init();
-Leap.loop({background: true}, leapAnimate).connect();
+var controller = Leap.loop({background: true}, leapAnimate);
+controller.connect();
+
+window.requestAnimationFrame(step);
 
 function init() {
 	stats = new Stats();
@@ -262,7 +265,6 @@ function leapAnimate(frame) {
 	//sphere.position.x += 1;
 
 	for (var hand of frame.hands) {
-
 		//let grabbed = hand.grabStrength > 0.5;
 
 		for (var i = 0; i < drums.length; i++) {
@@ -284,8 +286,9 @@ function leapAnimate(frame) {
 		updateMesh(arm, armMesh);
 		armMesh.scale.set(arm.width / 4, arm.width / 2, arm.length);
 	}
+}
 
-
+function step(timestamp) {
 	/* Update drums */
 
 	for (var i = 0; i < drums.length; i++) {
@@ -297,4 +300,6 @@ function leapAnimate(frame) {
 	renderer.render(scene, camera);
 	controls.update();
 	stats.update();
+
+	window.requestAnimationFrame(step);
 }
