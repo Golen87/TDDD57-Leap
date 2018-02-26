@@ -152,6 +152,27 @@ function init() {
 	note = new Note(scene, 40);
 	note.mesh.position.set(0, 0, -100);
 
+	//var music = new Audio('assets/music/Donkey Kong Country OST 8 Bonus Room Blitz.mp3');
+	//music.play();
+
+	// create an AudioListener and add it to the camera
+	var listener = new THREE.AudioListener();
+	camera.add( listener );
+
+	// create a global audio source
+	var sound = new THREE.Audio( listener );
+
+	//var json = require('./data.json');
+	//console.log(json);
+
+	var audioLoader = new THREE.AudioLoader();
+	audioLoader.load( 'assets/music/Donkey Kong Country OST 8 Bonus Room Blitz.mp3', function( buffer ) {
+		sound.setBuffer( buffer );
+		sound.setLoop( true );
+		sound.setVolume( 0.5 );
+		//sound.play();
+	});
+
 	var loader = new THREE.FontLoader();
 
 	loader.load( 'assets/fonts/Super Mario 256_Regular.json', function ( font ) {
