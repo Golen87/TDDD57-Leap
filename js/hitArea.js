@@ -4,7 +4,7 @@ function HitArea(scene, id, radius)
 	this.id = id;
 
 	this.radius = radius;
-	this.height = 40;
+	this.height = 60;
 
 	this.isHit = false;
 	this.hitTimer = 0;

@@ -37,12 +37,12 @@ function init() {
 	document.body.appendChild(renderer.domElement);
 
 	camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 5000);
-	camera.position.set(0, 700, 500);
+	camera.position.set(0, 1000, 700);
 
 	controls = new THREE.OrbitControls(camera, renderer.domElement);
 	controls.maxDistance = 1000;
 
-	controls.target.set(0, 200, 0);
+	controls.target.set(0, 300, 0);
 
 	scene = new THREE.Scene();
 
@@ -52,7 +52,7 @@ function init() {
 	var gridHelper = new THREE.GridHelper(150, 10);
 	scene.add(gridHelper);
 
-	var axisHelper = new THREE.AxisHelper(150);
+	var axisHelper = new THREE.AxesHelper(150);
 	scene.add(axisHelper);
 
 	var geometry = new THREE.BoxGeometry(300, 20, 300);
@@ -63,11 +63,12 @@ function init() {
 
 	/* Drums */
 
+	var scale = 1.5;
 	var positions = [
-		new THREE.Vector3(-150, -30, -28),
-		new THREE.Vector3(-58,  30, -100),
-		new THREE.Vector3( 58,  30, -100),
-		new THREE.Vector3( 150, -30, -28),
+		new THREE.Vector3(-150*scale, -30*scale, -28*scale),
+		new THREE.Vector3(-58*scale,  30*scale, -100*scale),
+		new THREE.Vector3( 58*scale,  30*scale, -100*scale),
+		new THREE.Vector3( 150*scale, -30*scale, -28*scale),
 	];
 
 	//for (var i=0; i<positions.length; i++) {
@@ -92,7 +93,7 @@ function init() {
 		let objLoader = new THREE.OBJLoader();
 		objLoader.setMaterials(materials);
 		objLoader.load('assets/models/conga.obj', function(object) {
-			object.scale.set(50, 50, 50);
+			object.scale.set(50*scale, 50*scale, 50*scale);
 
 			for (var i = 0; i < positions.length; i++) {
 				var pos = positions[i];
@@ -102,9 +103,9 @@ function init() {
 				scene.add(drum.mesh);
 				drums.push(drum)
 
-				var area = new HitArea(scene, i, 56);
+				var area = new HitArea(scene, i, 56*scale);
 				area.mesh.position.copy(pos);
-				area.mesh.position.y += 198;
+				area.mesh.position.y += 198*scale;
 				drum.addHitArea(area);
 			}
 		});
@@ -116,25 +117,25 @@ function init() {
 		let objLoader = new THREE.OBJLoader();
 		objLoader.setMaterials(materials);
 		objLoader.load('assets/models/bongos.obj', function(object) {
-			object.scale.set(50, 50, 50);
+			object.scale.set(50*scale, 50*scale, 50*scale);
 
-			var pos = new THREE.Vector3(0, 100, 40);
+			var pos = new THREE.Vector3(0, 100*scale, 40*scale);
 			var drum = new Drum(scene);
 			drum.mesh = object.clone();
 			drum.mesh.position.copy(pos);
 			scene.add(drum.mesh);
 			drums.push(drum);
 
-			var area = new HitArea(scene, 0, 53);
+			var area = new HitArea(scene, 0, 53*scale);
 			area.mesh.position.copy(pos);
-			area.mesh.position.y += 55;
-			area.mesh.position.x -= 59;
+			area.mesh.position.y += 55*scale;
+			area.mesh.position.x -= 59*scale;
 			drum.addHitArea(area);
 
-			var area = new HitArea(scene, 0, 43);
+			var area = new HitArea(scene, 0, 43*scale);
 			area.mesh.position.copy(pos);
-			area.mesh.position.y += 55;
-			area.mesh.position.x += 65;
+			area.mesh.position.y += 55*scale;
+			area.mesh.position.x += 65*scale;
 			drum.addHitArea(area);
 		});
 	});
@@ -176,7 +177,8 @@ function init() {
 	var loader = new THREE.FontLoader();
 
 	loader.load( 'assets/fonts/Super Mario 256_Regular.json', function ( font ) {
-		var textGeo = new THREE.TextGeometry( 'Hello three.js!', {
+		var string = 'TDDD57';
+		var textGeo = new THREE.TextGeometry( string, {
 			font: font,
 			size: 80,
 			height: 50,
@@ -188,9 +190,9 @@ function init() {
 		} );
 		var color = new THREE.Color();
 		color.setRGB(255, 0, 0);
-		var textMaterial = new THREE.MeshNormalMaterial({ color: color });
+		var textMaterial = new THREE.MeshNormalMaterial(); //{ color: color }
 		var text = new THREE.Mesh(textGeo , textMaterial);
-		text.position.set(-500, 200, -300);
+		text.position.set(-string.length/2*80*scale, 200*scale, -300*scale);
 		scene.add(text);
 	} );
 
