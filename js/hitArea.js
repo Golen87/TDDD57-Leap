@@ -2,6 +2,7 @@
 function HitArea(scene, id, radius)
 {
 	this.id = id;
+	this.sound = ['conga1', 'conga2', 'conga3', 'conga4', 'bongo1', 'bongo2', 'bongo3', 'bongo4', 'side'].choice();
 
 	this.radius = radius;
 	this.height = 60;
@@ -51,9 +52,17 @@ HitArea.prototype.checkPointCollision = function (point, velocity)
 		velocity.y < -100)
 	{
 		if (!this.isHit) {
-			var fac = generalSmoothStep(10, Math.pow(dist/this.radius, 2));
-			sidetapSound.play();
-			congaSounds[this.id].play(0 + fac*700);
+			var distFac = generalSmoothStep(10, Math.pow(dist/this.radius, 2));
+			var speedFac = Math.min(1000, -velocity.y - 100) / 1000;
+
+			var volume = 0.7 + 1.0 * speedFac - 1.0 * distFac;
+			var volumeSide = 1.0 * distFac + 0.5 * speedFac;
+			var pitch = 1.0 + 0.5 * distFac;
+			var pitchSide = 0.9 + (100-this.radius)/100; // 65-85 (0.15-0.35)
+			//var pitchSide = drumFiles[this.sound].pitch;
+
+			audioManager.play(this.sound, volume, pitch);
+			audioManager.play('side', volumeSide, pitchSide);
 		}
 		this.hit();
 	}
