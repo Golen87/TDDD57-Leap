@@ -5,7 +5,7 @@ function HitArea(scene, id, radius)
 	this.sound = ['conga1', 'conga2', 'conga3', 'conga4', 'bongo1', 'bongo2', 'bongo3', 'bongo4', 'side'].choice();
 
 	this.radius = radius;
-	this.height = 60;
+	this.height = 40;
 
 	this.isHit = false;
 	this.hitTimer = 0;
@@ -25,11 +25,13 @@ HitArea.prototype.update = function () {
 	}
 
 	this.mat.opacity -= (this.mat.opacity - 0.3) / 20;
+	this.mat.opacity = 0;
 }
 
 HitArea.prototype.checkCollision = function (hand)
 {
-	for (var i = 0; i < hand.fingers.length; i++) {
+	// Skip thumb
+	for (var i = 1; i < hand.fingers.length; i++) {
 		if (hand.fingers[i]) {
 			var point = arrayToVector(hand.fingers[i].tipPosition);
 			var velocity = arrayToVector(hand.fingers[i].tipVelocity);
@@ -45,7 +47,7 @@ HitArea.prototype.checkPointCollision = function (point, velocity)
 	planePoint.y = this.mesh.position.y;
 	var dist = this.mesh.position.distanceTo(planePoint);
 
-	var hDiff = Math.abs(this.mesh.position.y - point.y);
+	var hDiff = Math.abs(this.mesh.position.y - point.y - this.height);
 
 	if (dist < this.radius &&
 		hDiff < this.height &&
