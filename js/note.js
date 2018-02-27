@@ -1,7 +1,9 @@
 
-function Note(scene, radius)
+function Note(scene, radius, track, time)
 {
-	//this.id = id;
+	// TODO: set position based on track and time
+	this.track = track;
+	this.time = time;
 
 	this.radius = radius;
 	this.height = 40;
@@ -14,6 +16,9 @@ function Note(scene, radius)
 	this.mat.transparent = true;
 	this.mesh = new THREE.Mesh( this.geo, this.mat );
 	scene.add( this.mesh );
+
+	this.mesh.position.x = track * 100;
+	this.mesh.position.z = -time;
 };
 
 Note.prototype.update = function () {
