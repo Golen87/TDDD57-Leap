@@ -38,13 +38,13 @@ Drum.prototype.checkCollision = function (hand)
 	}
 };
 
-Drum.prototype.hit = function ()
+Drum.prototype.hit = function (fac=0.15)
 {
 	if (!this.originalScale) {
 		this.originalScale = this.mesh.scale.clone();
 	}
 
-	this.mesh.scale.x = this.originalScale.x * 1.1;
-	this.mesh.scale.y = this.originalScale.y * 0.9;
-	this.mesh.scale.z = this.originalScale.z * 1.1;
+	this.mesh.scale.x *= 1 + fac;
+	this.mesh.scale.y *= 1 - fac;
+	this.mesh.scale.z *= 1 + fac;
 };
