@@ -119,8 +119,8 @@ function init(preloaded_data) {
 		scene.add(drum.mesh);
 		drums.push(drum)
 
-		var callback = function(drum) {
-			console.log("Conga " + drum.id + " hit");
+		var callback = function(hitarea) {
+			console.log("Conga " + hitarea.id + " hit");
 		};
 		var area = new HitArea(scene, i, 56*scale, callback);
 		area.mesh.position.copy(pos);
