@@ -97,9 +97,12 @@ function init(preloaded_data) {
 	pLight.shadow.mapSize.height = 2048;
 	scene.add(pLight);
 
+<<<<<<< HEAD
 	var helper = new THREE.CameraHelper( pLight.shadow.camera );
 	scene.add( helper );
 
+=======
+>>>>>>> fda5b6ebaf7a8545bdbb38b18ec905c1a266e30b
 	var aLight = new THREE.AmbientLight( 0xAAAAAA ); // soft white light
 	scene.add( aLight );
 
@@ -175,11 +178,14 @@ function onWindowResize() {
 
 function addMesh(meshes) {
 	var geometry = new THREE.BoxGeometry(1, 1, 1);
-	var material = new THREE.MeshNormalMaterial();
+	var material = new THREE.MeshLambertMaterial({color: 0xe59482});
 	var mesh = new THREE.Mesh(geometry, material);
 	mesh.castShadow = true;
 	mesh.receiveShadow = true;
 	meshes.push(mesh);
+
+	material.transparent = true;
+	material.opacity = 0.4;
 
 	return mesh;
 }
@@ -234,6 +240,15 @@ function leapAnimate(frame) {
 function step(timestamp) {
 	/* Update drums */
 
+	if (audioManager.getBar() != audioManager.lastBar && audioManager.getBar() >= 0) {
+		audioManager.lastBar = audioManager.getBar();
+		console.log(audioManager.lastBar);
+
+		for (var i = 0; i < drums.length; i++) {
+			drums[i].hit(0.02);
+		}
+	}
+
 	for (var i = 0; i < drums.length; i++) {
 		drums[i].update();
 	}
@@ -243,6 +258,9 @@ function step(timestamp) {
 	if (noteManager) {
 		noteManager.update();
 	}
+
+	audioManager.update();
+	noteManager.update();
 
 	renderer.render(scene, camera);
 	controls.update();

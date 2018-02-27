@@ -5,7 +5,7 @@ function HitArea(scene, id, radius)
 	this.sound = ['conga1', 'conga2', 'conga3', 'conga4', 'bongo1', 'bongo2', 'bongo3', 'bongo4', 'side'].choice();
 
 	this.radius = radius;
-	this.height = 60;
+	this.height = 40;
 
 	this.isHit = false;
 	this.hitTimer = 0;
@@ -25,11 +25,13 @@ HitArea.prototype.update = function () {
 	}
 
 	this.mat.opacity -= (this.mat.opacity - 0.3) / 20;
+	this.mat.opacity = 0;
 }
 
 HitArea.prototype.checkCollision = function (hand)
 {
-	for (var i = 0; i < hand.fingers.length; i++) {
+	// Skip thumb
+	for (var i = 1; i < hand.fingers.length; i++) {
 		if (hand.fingers[i]) {
 			var point = arrayToVector(hand.fingers[i].tipPosition);
 			var velocity = arrayToVector(hand.fingers[i].tipVelocity);
@@ -45,16 +47,16 @@ HitArea.prototype.checkPointCollision = function (point, velocity)
 	planePoint.y = this.mesh.position.y;
 	var dist = this.mesh.position.distanceTo(planePoint);
 
-	var hDiff = Math.abs(this.mesh.position.y - point.y);
+	var hDiff = Math.abs(this.mesh.position.y - point.y - this.height);
 
 	if (dist < this.radius &&
 		hDiff < this.height &&
 		velocity.y < -100)
 	{
-		if (!this.isHit) {
-			var distFac = generalSmoothStep(10, Math.pow(dist/this.radius, 2));
-			var speedFac = Math.min(1000, -velocity.y - 100) / 1000;
+		var distFac = generalSmoothStep(10, Math.pow(dist/this.radius, 2));
+		var speedFac = Math.min(1000, -velocity.y - 100) / 1000;
 
+		if (!this.isHit) {
 			var volume = 0.7 + 1.0 * speedFac - 1.0 * distFac;
 			var volumeSide = 1.0 * distFac + 0.5 * speedFac;
 			var pitch = 1.0 + 0.5 * distFac;
@@ -63,8 +65,10 @@ HitArea.prototype.checkPointCollision = function (point, velocity)
 
 			audioManager.play(this.sound, volume, pitch);
 			audioManager.play('side', volumeSide, pitchSide);
+
+			this.owner.hit();
 		}
-		this.hit();
+		this.hit(speedFac);
 	}
 
 	// Color gradient over distance
@@ -78,7 +82,7 @@ HitArea.prototype.checkPointCollision = function (point, velocity)
 	//this.mat.color.setHex(color);
 };
 
-HitArea.prototype.hit = function () {
+HitArea.prototype.hit = function (speedFac) {
 	this.isHit = true;
 	this.hitTimer = 4;
 
