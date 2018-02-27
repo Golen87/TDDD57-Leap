@@ -97,12 +97,6 @@ function init(preloaded_data) {
 	pLight.shadow.mapSize.height = 2048;
 	scene.add(pLight);
 
-<<<<<<< HEAD
-	var helper = new THREE.CameraHelper( pLight.shadow.camera );
-	scene.add( helper );
-
-=======
->>>>>>> fda5b6ebaf7a8545bdbb38b18ec905c1a266e30b
 	var aLight = new THREE.AmbientLight( 0xAAAAAA ); // soft white light
 	scene.add( aLight );
 
@@ -159,9 +153,6 @@ function init(preloaded_data) {
 	area.mesh.position.y += 55*scale;
 	area.mesh.position.x += 65*scale;
 	drum.addHitArea(area);
-
-	//note = new Note(scene, 40);
-	//note.mesh.position.set(0, 0, -100);
 
 	noteManager = new NoteManager(scene);
 	noteManager.loadSong('assets/notedata/testsong');
@@ -253,14 +244,10 @@ function step(timestamp) {
 		drums[i].update();
 	}
 
-	//note.update();
-
+	audioManager.update();
 	if (noteManager) {
 		noteManager.update();
 	}
-
-	audioManager.update();
-	noteManager.update();
 
 	renderer.render(scene, camera);
 	controls.update();
