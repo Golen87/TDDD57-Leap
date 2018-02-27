@@ -11,22 +11,27 @@ var noteManager = null;
 
 var stats, renderer, scene, camera, controls;
 
-init();
 var controller = Leap.loop({background: true}, leapAnimate);
 controller.connect();
 
 window.requestAnimationFrame(step);
 
-function init() {
-	stats = new Stats();
-	stats.domElement.style.cssText = 'position: absolute; right: 0; top: 0; z-index: 100; ';
-	document.body.appendChild(stats.domElement);
+var files_to_preload = [
+	{ type: 'mesh', name: 'conga' },
+	{ type: 'mesh', name: 'bongos' }
+];
 
+pre_init();
+
+function pre_init() {
 	renderer = new THREE.WebGLRenderer({ alpha: 1, antialias: true, clearColor: 0xffffff });
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	renderer.shadowMap.enabled = true;
-	renderer.shadowMap.type = THREE.PCFShadowMap
+	renderer.shadowMap.type = THREE.PCFShadowMap;
 
+	stats = new Stats();
+	stats.domElement.style.cssText = 'position: absolute; right: 0; top: 0; z-index: 100; ';
+	document.body.appendChild(stats.domElement);
 	document.body.appendChild(renderer.domElement);
 
 	camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 5000);
@@ -39,6 +44,10 @@ function init() {
 
 	scene = new THREE.Scene();
 
+	preload_files(files_to_preload).then(init);
+}
+
+function init(preloaded_data) {
 	var geometry = new THREE.PlaneBufferGeometry( 100, 100 );
 	var planeMaterial = new THREE.MeshPhongMaterial( { color: 0xffdd99 } );
 	var ground = new THREE.Mesh( geometry, planeMaterial );
@@ -49,10 +58,8 @@ function init() {
 	ground.receiveShadow = true;
 	scene.add( ground );
 
-
 	audioManager.init(camera);
 	textManager.init(scene);
-
 
 	/* Helpers */
 
@@ -93,76 +100,59 @@ function init() {
 	var aLight = new THREE.AmbientLight( 0xAAAAAA ); // soft white light
 	scene.add( aLight );
 
-	// Load congas
-	var mtlLoader = new THREE.MTLLoader();
-	mtlLoader.setTexturePath('assets/textures/');
-	mtlLoader.load('assets/models/conga.mtl', function(materials) {
-		materials.preload();
-		let objLoader = new THREE.OBJLoader();
-		objLoader.setMaterials(materials);
-		objLoader.load('assets/models/conga.obj', function(object) {
-			object.scale.set(50*scale, 50*scale, 50*scale);
+	// Create congas
+	var congaMesh = preloaded_data['conga'];
+	congaMesh.scale.set(50*scale, 50*scale, 50*scale);
 
-			object.traverse(function(child) {
-				if (child instanceof THREE.Mesh) {
-					child.castShadow = true;
-					child.receiveShadow = true;
-				}
-			});
-
-			for (var i = 0; i < positions.length; i++) {
-				var pos = positions[i];
-				var drum = new Drum(scene, i);
-				drum.mesh = object.clone();
-				drum.mesh.position.copy(pos);
-				scene.add(drum.mesh);
-				drums.push(drum)
-
-				var area = new HitArea(scene, i, 56*scale);
-				area.mesh.position.copy(pos);
-				area.mesh.position.y += 198*scale;
-				drum.addHitArea(area);
-			}
-		});
+	congaMesh.traverse(function(child) {
+		if (child instanceof THREE.Mesh) {
+			child.castShadow = true;
+			child.receiveShadow = true;
+		}
 	});
 
-	// Load bongos
-	mtlLoader.load('assets/models/bongos.mtl', function(materials) {
-		materials.preload();
-		let objLoader = new THREE.OBJLoader();
-		objLoader.setMaterials(materials);
-		objLoader.load('assets/models/bongos.obj', function(object) {
-			object.scale.set(50*scale, 50*scale, 50*scale);
-			object.traverse(function(child) {
-				if (child instanceof THREE.Mesh) {
-					child.castShadow = true;
-					child.receiveShadow = true;
-				}
-			});
+	for (var i = 0; i < positions.length; i++) {
+		var pos = positions[i];
+		var drum = new Drum(scene, i);
+		drum.mesh = congaMesh.clone();
+		drum.mesh.position.copy(pos);
+		scene.add(drum.mesh);
+		drums.push(drum)
 
-			var pos = new THREE.Vector3(0, 100*scale, 40*scale);
-			var drum = new Drum(scene);
-			drum.mesh = object.clone();
-			drum.mesh.position.copy(pos);
-			scene.add(drum.mesh);
-			drums.push(drum);
+		var area = new HitArea(scene, i, 56*scale);
+		area.mesh.position.copy(pos);
+		area.mesh.position.y += 198*scale;
+		drum.addHitArea(area);
+	}
 
-			var area = new HitArea(scene, 0, 53*scale);
-			area.mesh.position.copy(pos);
-			area.mesh.position.y += 55*scale;
-			area.mesh.position.x -= 59*scale;
-			drum.addHitArea(area);
-
-			var area = new HitArea(scene, 0, 43*scale);
-			area.mesh.position.copy(pos);
-			area.mesh.position.y += 55*scale;
-			area.mesh.position.x += 65*scale;
-			drum.addHitArea(area);
-		});
+	// Create bongos
+	var bongoMesh = preloaded_data['bongos'];
+	bongoMesh.scale.set(50*scale, 50*scale, 50*scale);
+	bongoMesh.traverse(function(child) {
+		if (child instanceof THREE.Mesh) {
+			child.castShadow = true;
+			child.receiveShadow = true;
+		}
 	});
 
-	//note = new Note(scene, 40);
-	//note.mesh.position.set(0, 0, -100);
+	var pos = new THREE.Vector3(0, 100*scale, 40*scale);
+	var drum = new Drum(scene);
+	drum.mesh = bongoMesh.clone();
+	drum.mesh.position.copy(pos);
+	scene.add(drum.mesh);
+	drums.push(drum);
+
+	var area = new HitArea(scene, 0, 53*scale);
+	area.mesh.position.copy(pos);
+	area.mesh.position.y += 55*scale;
+	area.mesh.position.x -= 59*scale;
+	drum.addHitArea(area);
+
+	var area = new HitArea(scene, 0, 43*scale);
+	area.mesh.position.copy(pos);
+	area.mesh.position.y += 55*scale;
+	area.mesh.position.x += 65*scale;
+	drum.addHitArea(area);
 
 	noteManager = new NoteManager(scene);
 	noteManager.loadSong('assets/notedata/testsong');
@@ -253,10 +243,12 @@ function step(timestamp) {
 		drums[i].update();
 	}
 
-	//note.update();
-
-	audioManager.update();
-	noteManager.update(audioManager.getElapsed());
+	if (audioManager) {
+		audioManager.update();
+	}
+	if (noteManager) {
+		noteManager.update(audioManager.getElapsed());
+	}
 
 	renderer.render(scene, camera);
 	controls.update();
