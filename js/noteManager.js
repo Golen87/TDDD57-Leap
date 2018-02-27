@@ -20,8 +20,10 @@ function parseSong(fileData) {
 	var lines = fileData.split(/\n/);
 	var notes = [];
 	for (let l of lines) {
-		[track, time] = l.split(' ');
-		notes.push({ track: track, time: time });
+		if (l != '') {
+			[track, time] = l.split(' ');
+			notes.push({ track: parseInt(track), time: parseInt(time) });
+		}
 	}
 	return notes;
 }
@@ -29,12 +31,13 @@ function parseSong(fileData) {
 NoteManager.prototype.createNotes = function() {
 	this.notes = [];
 	for (let nd of this.loadedSong) {
-		this.notes.push(new Note(scene, 40, nd.track, nd.time));
+		var note = new Note(scene, 40, nd.track, nd.time);
+		this.notes.push(note);
 	}
 }
 
-NoteManager.prototype.update = function() {
+NoteManager.prototype.update = function(elapsed) {
 	for (let note of this.notes) {
-		note.update();
+		note.update(elapsed);
 	}
 }

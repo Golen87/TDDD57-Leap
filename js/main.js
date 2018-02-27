@@ -243,7 +243,6 @@ function step(timestamp) {
 
 	if (audioManager.getBar() != audioManager.lastBar && audioManager.getBar() >= 0) {
 		audioManager.lastBar = audioManager.getBar();
-		console.log(audioManager.lastBar);
 
 		for (var i = 0; i < drums.length; i++) {
 			drums[i].hit(0.02);
@@ -257,7 +256,7 @@ function step(timestamp) {
 	//note.update();
 
 	audioManager.update();
-	noteManager.update();
+	noteManager.update(audioManager.getElapsed());
 
 	renderer.render(scene, camera);
 	controls.update();
