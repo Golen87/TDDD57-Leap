@@ -4,6 +4,17 @@ var armMeshes = [];
 var boneMeshes = [];
 var drums = [];
 
+var particleSystems = [];
+
+var pMaterial = new THREE.PointsMaterial({
+	color: 0xFFFFFF,
+	size: 20,
+	map: new THREE.TextureLoader().load(
+		"assets/textures/particle.png"
+	),
+	blending: THREE.AdditiveBlending,
+	transparent: true
+});
 
 var audioManager = new AudioManager();
 var textManager = new TextManager();
@@ -28,6 +39,7 @@ function pre_init() {
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	renderer.shadowMap.enabled = true;
 	renderer.shadowMap.type = THREE.PCFShadowMap;
+	renderer.setClearColor(0xFFFFFF);
 
 	stats = new Stats();
 	stats.domElement.style.cssText = 'position: absolute; right: 0; top: 0; z-index: 100; ';
@@ -45,6 +57,30 @@ function pre_init() {
 	scene = new THREE.Scene();
 
 	preload_files(files_to_preload).then(init);
+}
+
+function spawn_particles(position, amount) {
+	console.log("spawning particles");
+
+	var particles = new THREE.Geometry();
+	for (var p = 0; p < amount; p++) {
+		var pAngle = Math.random() * 2 * Math.PI,
+			pRad = Math.random() * 80,
+			pX = position.x + Math.cos(pAngle) * pRad,
+			pY = position.y + 10,
+			pZ = position.z + Math.sin(pAngle) * pRad,
+			particle = new THREE.Vector3(pX, pY, pZ),
+			xvel = (pX - position.x) * 0.05,
+			zvel = (pZ - position.z) * 0.05;
+
+		particle.velocity = new THREE.Vector3(xvel, 5, zvel);
+		particles.vertices.push(particle);
+	}
+
+	var particleSystem = new THREE.Points(particles, pMaterial);
+	particleSystem.sortParticles = true;
+	scene.add(particleSystem);
+	particleSystems.push(particleSystem);
 }
 
 function init(preloaded_data) {
@@ -121,6 +157,7 @@ function init(preloaded_data) {
 
 		var callback = function(hitarea) {
 			console.log("Conga " + hitarea.id + " hit");
+			spawn_particles(hitarea.mesh.position, 1000);
 		};
 		var area = new HitArea(scene, i, 56*scale, callback);
 		area.mesh.position.copy(pos);
@@ -233,6 +270,24 @@ function leapAnimate(frame) {
 	}
 }
 
+function updateParticles() {
+	//console.log("hopp");
+	for (let particleSystem of particleSystems) {
+		//console.log("hej");
+		for (let particle of particleSystem.geometry.vertices) {
+			if (particle.y < -200) {
+				// TODO: remove particle system
+			}
+
+			//console.log("yolo");
+			particle.velocity.y -= Math.random();
+			particle.add(particle.velocity);
+		}
+
+		particleSystem.geometry.verticesNeedUpdate = true;
+	}
+}
+
 function step(timestamp) {
 	/* Update drums */
 
@@ -247,6 +302,8 @@ function step(timestamp) {
 	for (var i = 0; i < drums.length; i++) {
 		drums[i].update();
 	}
+
+	updateParticles();
 
 	if (audioManager) {
 		audioManager.update();
