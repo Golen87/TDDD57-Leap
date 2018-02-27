@@ -19,8 +19,16 @@ window.requestAnimationFrame(step);
 
 var files_to_preload = [
 	{ type: 'mesh', name: 'conga' },
-	{ type: 'mesh', name: 'bongos' }
+	{ type: 'mesh', name: 'bongos' },
+	{ type: 'font', name: 'Super Mario 256_Regular.json' },
 ];
+
+for (var name in musicFiles) {
+	files_to_preload.push({type: 'music', name: name});
+}
+for (var name in soundFiles) {
+	files_to_preload.push({type: 'sound', name: name});
+}
 
 pre_init();
 
@@ -59,8 +67,8 @@ function init(preloaded_data) {
 	ground.receiveShadow = true;
 	scene.add( ground );
 
-	audioManager.init(camera);
-	textManager.init(scene);
+	audioManager.init(camera, preloaded_data);
+	textManager.init(scene, preloaded_data['Super Mario 256_Regular.json']);
 
 	/* Helpers */
 
@@ -87,6 +95,7 @@ function init(preloaded_data) {
 		{type: 'conga', position: [  58,  30, -100], sound: 'conga3'},
 		{type: 'conga', position: [ 150, -30,  -28], sound: 'conga4'},
 		{type: 'bongo', position: [   0, 100,   40], sound: ['bongo1', 'bongo2']},
+		{type: 'bongo', position: [   0, 200,   40], sound: ['bongo3', 'bongo4']},
 	];
 
 

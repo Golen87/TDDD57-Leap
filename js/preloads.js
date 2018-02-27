@@ -25,10 +25,21 @@ function preload_files(files_to_load) {
 				resolve_if_complete(file.name, data)
 			};
 
-			if (file.type == "mesh") {
-				preload_mesh(file.name, callback);
-			} else if (file.type == "sound") {
-				preload_sound(file.name, callback);
+			switch (file.type) {
+				case "mesh":
+					preload_mesh(file.name, callback);
+					break;
+				case "music":
+					preload_music(file.name, callback);
+					break;
+				case "sound":
+					preload_sound(file.name, callback);
+					break;
+				case "font":
+					preload_font(file.name, callback);
+					break;
+				default:
+					break;
 			}
 		}
 	});
@@ -45,5 +56,17 @@ function preload_mesh(name, on_complete) {
 	});
 }
 
+function preload_music(name, on_complete) {
+	var audioLoader = new THREE.AudioLoader();
+	audioLoader.load('/assets/music/' + name + '.mp3', on_complete);
+}
+
 function preload_sound(name, on_complete) {
+	var audioLoader = new THREE.AudioLoader();
+	audioLoader.load('/assets/sounds/' + name + '.wav', on_complete);
+}
+
+function preload_font(name, on_complete) {
+	var loader = new THREE.FontLoader();
+	loader.load( 'assets/fonts/' + name, on_complete );
 }
