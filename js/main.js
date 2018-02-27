@@ -3,6 +3,7 @@ var baseBoneRotation = (new THREE.Quaternion).setFromEuler(new THREE.Euler(0, 0,
 var armMeshes = [];
 var boneMeshes = [];
 var drums = [];
+var hitAreas = [];
 
 
 var audioManager = new AudioManager();
@@ -80,16 +81,17 @@ function init(preloaded_data) {
 	/* Drums */
 
 	var scale = 1.5;
-	var positions = [
-		new THREE.Vector3(-150*scale, -30*scale, -28*scale),
-		new THREE.Vector3(-58*scale,  30*scale, -100*scale),
-		new THREE.Vector3( 58*scale,  30*scale, -100*scale),
-		new THREE.Vector3( 150*scale, -30*scale, -28*scale),
+	var drumData = [
+		{type: 'conga', position: [-150, -30,  -28], sound: 'conga1'},
+		{type: 'conga', position: [ -58,  30, -100], sound: 'conga2'},
+		{type: 'conga', position: [  58,  30, -100], sound: 'conga3'},
+		{type: 'conga', position: [ 150, -30,  -28], sound: 'conga4'},
+		{type: 'bongo', position: [   0, 100,   40], sound: ['bongo1', 'bongo2']},
 	];
 
 
 	var pLight = new THREE.SpotLight(0xffffff);
-	pLight.position.set(0, 1000, 100);
+	pLight.position.set(0, 1000, 0);
 	pLight.castShadow = true;
 	pLight.shadow.camera.fov = 30;
 	pLight.shadow.camera.far = 6000;
@@ -103,7 +105,6 @@ function init(preloaded_data) {
 	// Create congas
 	var congaMesh = preloaded_data['conga'];
 	congaMesh.scale.set(50*scale, 50*scale, 50*scale);
-
 	congaMesh.traverse(function(child) {
 		if (child instanceof THREE.Mesh) {
 			child.castShadow = true;
@@ -111,18 +112,24 @@ function init(preloaded_data) {
 		}
 	});
 
-	for (var i = 0; i < positions.length; i++) {
-		var pos = positions[i];
-		var drum = new Drum(scene, i);
-		drum.mesh = congaMesh.clone();
-		drum.mesh.position.copy(pos);
-		scene.add(drum.mesh);
-		drums.push(drum)
+	for (var i = 0; i < drumData.length; i++) {
+		var data = drumData[i];
+		if (data.type == 'conga') {
+			var pos = arrayToVector(data.position);
+			pos.multiplyScalar(scale);
 
-		var area = new HitArea(scene, i, 56*scale);
-		area.mesh.position.copy(pos);
-		area.mesh.position.y += 198*scale;
-		drum.addHitArea(area);
+			var drum = new Drum(scene, i);
+			drum.mesh = congaMesh.clone();
+			drum.mesh.position.copy(pos);
+			scene.add(drum.mesh);
+			drums.push(drum)
+
+			var area = new HitArea(scene, data.sound, 56*scale);
+			area.mesh.position.copy(pos);
+			area.mesh.position.y += 198*scale;
+			hitAreas.push(area);
+			drum.addHitArea(area);
+		}
 	}
 
 	// Create bongos
@@ -135,24 +142,33 @@ function init(preloaded_data) {
 		}
 	});
 
-	var pos = new THREE.Vector3(0, 100*scale, 40*scale);
-	var drum = new Drum(scene);
-	drum.mesh = bongoMesh.clone();
-	drum.mesh.position.copy(pos);
-	scene.add(drum.mesh);
-	drums.push(drum);
+	for (var i = 0; i < drumData.length; i++) {
+		var data = drumData[i];
+		if (data.type == 'bongo') {
+			var pos = arrayToVector(data.position);
+			pos.multiplyScalar(scale);
 
-	var area = new HitArea(scene, 0, 53*scale);
-	area.mesh.position.copy(pos);
-	area.mesh.position.y += 55*scale;
-	area.mesh.position.x -= 59*scale;
-	drum.addHitArea(area);
+			var drum = new Drum(scene, i);
+			drum.mesh = bongoMesh.clone();
+			drum.mesh.position.copy(pos);
+			scene.add(drum.mesh);
+			drums.push(drum)
 
-	var area = new HitArea(scene, 0, 43*scale);
-	area.mesh.position.copy(pos);
-	area.mesh.position.y += 55*scale;
-	area.mesh.position.x += 65*scale;
-	drum.addHitArea(area);
+			var area = new HitArea(scene, data.sound[0], 53*scale);
+			area.mesh.position.copy(pos);
+			area.mesh.position.y += 55*scale;
+			area.mesh.position.x -= 59*scale;
+			hitAreas.push(area);
+			drum.addHitArea(area);
+
+			var area = new HitArea(scene, data.sound[1], 43*scale);
+			area.mesh.position.copy(pos);
+			area.mesh.position.y += 55*scale;
+			area.mesh.position.x += 65*scale;
+			hitAreas.push(area);
+			drum.addHitArea(area);
+		}
+	}
 
 	noteManager = new NoteManager(scene);
 	noteManager.loadSong('assets/notedata/testsong');

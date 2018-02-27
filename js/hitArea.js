@@ -1,8 +1,7 @@
 
-function HitArea(scene, id, radius)
+function HitArea(scene, sound, radius)
 {
-	this.id = id;
-	this.sound = ['conga1', 'conga2', 'conga3', 'conga4', 'bongo1', 'bongo2', 'bongo3', 'bongo4', 'side'].choice();
+	this.sound = sound;
 
 	this.radius = radius;
 	this.height = 40;

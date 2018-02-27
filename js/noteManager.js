@@ -21,8 +21,9 @@ function parseSong(fileData) {
 	var notes = [];
 	for (let l of lines) {
 		if (l != '') {
-			[track, time] = l.split(' ');
-			notes.push({ track: parseInt(track), time: parseInt(time) });
+			var area, time;
+			[area, time] = l.split(' ');
+			notes.push({ area: parseFloat(area), time: parseFloat(time) });
 		}
 	}
 	return notes;
@@ -31,7 +32,7 @@ function parseSong(fileData) {
 NoteManager.prototype.createNotes = function() {
 	this.notes = [];
 	for (let nd of this.loadedSong) {
-		var note = new Note(scene, 40, nd.track, nd.time);
+		var note = new Note(scene, nd.area, nd.time);
 		this.notes.push(note);
 	}
 }

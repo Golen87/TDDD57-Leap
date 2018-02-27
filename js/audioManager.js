@@ -12,6 +12,12 @@ var musicFiles = {
 		"sign": 4,
 		"delay": 0.97,
 	},
+	"Piranha Creeper Cove": {
+		"filename": "/assets/music/Captain Toad- Treasure Tracker – Piranha Creeper Cove.mp3",
+		"bpm": 144.0,
+		"sign": 4,
+		"delay": 0.19,
+	},
 }
 
 var drumFiles = {
