@@ -241,12 +241,22 @@ function leapAnimate(frame) {
 function step(timestamp) {
 	/* Update drums */
 
+	if (audioManager.getBar() != audioManager.lastBar && audioManager.getBar() >= 0) {
+		audioManager.lastBar = audioManager.getBar();
+		console.log(audioManager.lastBar);
+
+		for (var i = 0; i < drums.length; i++) {
+			drums[i].hit(0.02);
+		}
+	}
+
 	for (var i = 0; i < drums.length; i++) {
 		drums[i].update();
 	}
 
 	//note.update();
 
+	audioManager.update();
 	noteManager.update();
 
 	renderer.render(scene, camera);
