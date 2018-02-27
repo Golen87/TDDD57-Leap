@@ -119,7 +119,10 @@ function init(preloaded_data) {
 		scene.add(drum.mesh);
 		drums.push(drum)
 
-		var area = new HitArea(scene, i, 56*scale);
+		var callback = function(drum) {
+			console.log("Conga " + drum.id + " hit");
+		};
+		var area = new HitArea(scene, i, 56*scale, callback);
 		area.mesh.position.copy(pos);
 		area.mesh.position.y += 198*scale;
 		drum.addHitArea(area);
@@ -142,13 +145,15 @@ function init(preloaded_data) {
 	scene.add(drum.mesh);
 	drums.push(drum);
 
-	var area = new HitArea(scene, 0, 53*scale);
+	var callback = function() { console.log("left bongo hit"); };
+	var area = new HitArea(scene, 0, 53*scale, callback);
 	area.mesh.position.copy(pos);
 	area.mesh.position.y += 55*scale;
 	area.mesh.position.x -= 59*scale;
 	drum.addHitArea(area);
 
-	var area = new HitArea(scene, 0, 43*scale);
+	var callback = function() { console.log("right bongo hit"); };
+	var area = new HitArea(scene, 0, 43*scale, callback);
 	area.mesh.position.copy(pos);
 	area.mesh.position.y += 55*scale;
 	area.mesh.position.x += 65*scale;

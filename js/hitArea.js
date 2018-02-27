@@ -1,11 +1,12 @@
 
-function HitArea(scene, id, radius)
+function HitArea(scene, id, radius, callback)
 {
 	this.id = id;
 	this.sound = ['conga1', 'conga2', 'conga3', 'conga4', 'bongo1', 'bongo2', 'bongo3', 'bongo4', 'side'].choice();
 
 	this.radius = radius;
 	this.height = 40;
+	this.callback = callback;
 
 	this.isHit = false;
 	this.hitTimer = 0;
@@ -67,6 +68,9 @@ HitArea.prototype.checkPointCollision = function (point, velocity)
 			audioManager.play('side', volumeSide, pitchSide);
 
 			this.owner.hit();
+			if (this.callback) {
+				this.callback(this);
+			}
 		}
 		this.hit(speedFac);
 	}
