@@ -91,14 +91,6 @@ function init() {
 	pLight.shadow.mapSize.height = 2048;
 	scene.add(pLight);
 
-	var helper = new THREE.CameraHelper( pLight.shadow.camera );
-	scene.add( helper );
-
-	// var pLight = new THREE.SpotLight(0xffffff);
-	// pLight.position.set(-100, 500, 100);
-	// pLight.castShadow = true;
-	// scene.add(pLight);
-
 	var aLight = new THREE.AmbientLight( 0xAAAAAA ); // soft white light
 	scene.add( aLight );
 
@@ -185,11 +177,14 @@ function onWindowResize() {
 
 function addMesh(meshes) {
 	var geometry = new THREE.BoxGeometry(1, 1, 1);
-	var material = new THREE.MeshNormalMaterial();
+	var material = new THREE.MeshLambertMaterial({color: 0xe59482});
 	var mesh = new THREE.Mesh(geometry, material);
 	mesh.castShadow = true;
 	mesh.receiveShadow = true;
 	meshes.push(mesh);
+
+	material.transparent = true;
+	material.opacity = 0.4;
 
 	return mesh;
 }
