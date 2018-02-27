@@ -7,8 +7,7 @@ var drums = [];
 
 var audioManager = new AudioManager();
 var textManager = new TextManager();
-
-var note;
+var noteManager = null;
 
 var stats, renderer, scene, camera, controls;
 
@@ -162,8 +161,11 @@ function init() {
 		});
 	});
 
-	note = new Note(scene, 40);
-	note.mesh.position.set(0, 0, -100);
+	//note = new Note(scene, 40);
+	//note.mesh.position.set(0, 0, -100);
+
+	noteManager = new NoteManager(scene);
+	noteManager.loadSong('assets/notedata/testsong');
 
 	window.addEventListener('resize', onWindowResize, false);
 }
@@ -243,7 +245,9 @@ function step(timestamp) {
 		drums[i].update();
 	}
 
-	note.update();
+	//note.update();
+
+	noteManager.update();
 
 	renderer.render(scene, camera);
 	controls.update();
