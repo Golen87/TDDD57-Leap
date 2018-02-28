@@ -23,6 +23,11 @@ var noteManager = null;
 
 var stats, renderer, scene, camera, controls;
 
+var startText = null;
+var stillTimer = -1;
+var lockTimer = 0;
+var stillTrigger = 70;
+
 var controller = Leap.loop({background: true}, leapAnimate);
 controller.connect();
 
@@ -68,28 +73,6 @@ function pre_init() {
 	preload_files(files_to_preload).then(init);
 }
 
-function spawn_particles(position, amount) {
-	var particles = new THREE.Geometry();
-	for (var p = 0; p < amount; p++) {
-		var pAngle = Math.random() * 2 * Math.PI,
-			pRad = Math.random() * 80,
-			pX = position.x + Math.cos(pAngle) * pRad,
-			pY = position.y + 10,
-			pZ = position.z + Math.sin(pAngle) * pRad,
-			particle = new THREE.Vector3(pX, pY, pZ),
-			xvel = (pX - position.x) * 0.05,
-			zvel = (pZ - position.z) * 0.05;
-
-		particle.velocity = new THREE.Vector3(xvel, 5, zvel);
-		particles.vertices.push(particle);
-	}
-
-	var particleSystem = new THREE.Points(particles, pMaterial);
-	particleSystem.sortParticles = true;
-	scene.add(particleSystem);
-	particleSystems.push(particleSystem);
-}
-
 function init(preloaded_data) {
 	var geometry = new THREE.PlaneBufferGeometry( 100, 100 );
 	var planeMaterial = new THREE.MeshPhongMaterial( { color: 0xffdd99 } );
@@ -103,6 +86,13 @@ function init(preloaded_data) {
 
 	audioManager.init(camera, preloaded_data);
 	textManager.init(scene, preloaded_data['Super Mario 256_Regular.json']);
+
+	var text = textManager.addText("TDDD57", 80, 20);
+	text.position.set(0, 450, -250);
+
+	startText = textManager.addText("Hold both hands to start", 25, 5);
+	startText.position.set(0, 370, -220);
+	startText.rotation.x = -Math.PI/8;
 
 	/* Helpers */
 
@@ -124,17 +114,17 @@ function init(preloaded_data) {
 
 	var scale = 1.5;
 	var drumData = [
-		{type: 'conga', position: [-150, -30,  -28], sound: 'conga1'},
-		{type: 'conga', position: [ -58,  30, -100], sound: 'conga2'},
-		{type: 'conga', position: [  58,  30, -100], sound: 'conga3'},
-		{type: 'conga', position: [ 150, -30,  -28], sound: 'conga4'},
-		{type: 'bongo', position: [   0, 100,   40], sound: ['bongo1', 'bongo2']},
-		{type: 'bongo', position: [   0, 200,   40], sound: ['bongo3', 'bongo4']},
+		{type: 'conga', position: [-150, -40,  -28], sound: 'conga1'},
+		{type: 'conga', position: [ -58,  20, -100], sound: 'conga2'},
+		{type: 'conga', position: [  58,  20, -100], sound: 'conga3'},
+		{type: 'conga', position: [ 150, -40,  -28], sound: 'conga4'},
+		{type: 'bongo', position: [   0,  90,   40], sound: ['bongo2', 'bongo1']},
+		//{type: 'bongo', position: [   0, 200,   40], sound: ['bongo3', 'bongo4']},
 	];
 
 
 	var pLight = new THREE.SpotLight(0xffffff);
-	pLight.position.set(0, 1000, 0);
+	pLight.position.set(0.0001, 1000, 0.0001);
 	pLight.castShadow = true;
 	pLight.shadow.camera.fov = 30;
 	pLight.shadow.camera.far = 6000;
@@ -144,6 +134,21 @@ function init(preloaded_data) {
 
 	var aLight = new THREE.AmbientLight( 0xAAAAAA ); // soft white light
 	scene.add( aLight );
+
+
+	var onHitCallback = function(hitArea, hitPoint) {
+		if (audioManager.currentSong) {
+			var acc = noteManager.hit(hitAreas.indexOf(hitArea), audioManager.getElapsed(), musicFiles[audioManager.currentSong].bpm);
+			if (acc) {
+				spawnParticles(hitArea.mesh.position, hitArea.radius, 200, accChart['color'][acc], accChart['size'][acc]);
+			} else {
+				spawnParticles(hitArea.mesh.position, hitArea.radius, 200, 0x777777);
+			}
+		} else {
+			spawnParticles(hitArea.mesh.position, hitArea.radius, 200, 0x777777);
+		}
+	};
+
 
 	// Create congas
 	var congaMesh = preloaded_data['conga'];
@@ -167,11 +172,7 @@ function init(preloaded_data) {
 			scene.add(drum.mesh);
 			drums.push(drum)
 
-			var callback = function(hitarea) {
-				spawn_particles(hitarea.mesh.position, 1000);
-			};
-
-			var area = new HitArea(scene, data.sound, 56*scale, callback);
+			var area = new HitArea(scene, data.sound, 56*scale, onHitCallback);
 			area.mesh.position.copy(pos);
 			area.mesh.position.y += 198*scale;
 			hitAreas.push(area);
@@ -201,14 +202,14 @@ function init(preloaded_data) {
 			scene.add(drum.mesh);
 			drums.push(drum)
 
-			var area = new HitArea(scene, data.sound[0], 53*scale);
+			var area = new HitArea(scene, data.sound[0], 53*scale, onHitCallback);
 			area.mesh.position.copy(pos);
 			area.mesh.position.y += 55*scale;
 			area.mesh.position.x -= 59*scale;
 			hitAreas.push(area);
 			drum.addHitArea(area);
 
-			var area = new HitArea(scene, data.sound[1], 43*scale);
+			var area = new HitArea(scene, data.sound[1], 43*scale, onHitCallback);
 			area.mesh.position.copy(pos);
 			area.mesh.position.y += 55*scale;
 			area.mesh.position.x += 65*scale;
@@ -235,7 +236,7 @@ function addMesh(meshes) {
 	var material = new THREE.MeshLambertMaterial({color: 0xe59482});
 	var mesh = new THREE.Mesh(geometry, material);
 	mesh.castShadow = true;
-	mesh.receiveShadow = true;
+	//mesh.receiveShadow = true;
 	meshes.push(mesh);
 
 	material.transparent = true;
@@ -289,17 +290,107 @@ function leapAnimate(frame) {
 		updateMesh(arm, armMesh);
 		armMesh.scale.set(arm.width / 4, arm.width / 2, arm.length);
 	}
+
+	if (frame.hands.length == 2) {
+		var x = 0;
+		for (var hand of frame.hands) {
+			x += arrayToVector(hand.palmVelocity).length();
+			if (hand.grabStrength < 0.5)
+				x += 999;
+		}
+		var still = x < 400;
+
+		if (still) {
+			if (stillTimer < 0) {
+				stillTimer = stillTrigger;
+			}
+			stillTimer -= 1;
+			if (stillTimer == 0) {
+				if (startText) {
+					scene.remove(startText);
+					startText.geometry.dispose();
+					startText.material.dispose();
+					startText = undefined;
+				}
+				lockTimer = 200;
+				if (!audioManager.currentSong) {
+					audioManager.startMusic("Piranha Creeper Cove");
+				} else {
+					audioManager.stopMusic();
+				}
+			}
+		} else {
+			stillTimer = -1;
+		}
+		if (lockTimer > 0) {
+			stillTimer = 0;
+		}
+		lockTimer -= 1;
+
+		var fac = Math.min(2, Math.max(1 , 3*(stillTrigger-stillTimer)/stillTrigger ))/3;
+		armMeshes.forEach(function(item) {
+			item.material.opacity = 0.5;
+			if (still && stillTimer > 0) {
+				item.material.opacity = 0.5 - 0.333 + fac;
+			}
+			//item.material.color = new THREE.Color(pickHex([0,255,0], [255,0,0], x));
+		});
+		boneMeshes.forEach(function(item) {
+			item.material.opacity = 0.5;
+			if (still && stillTimer > 0) {
+				item.material.opacity = 0.5 - 0.333 + fac;
+			}
+		});
+	}
+}
+
+function spawnParticles(pos, radius, amount, color=0xFFFFFF, scale=1.0) {
+	var particles = new THREE.Geometry();
+	amount *= scale;
+	for (var p = 0; p < amount; p++) {
+		var pAngle = (p/amount) * 2 * Math.PI,
+			speed = scale*(90 + 30*Math.random()),
+			vX = Math.cos(pAngle) * speed,
+			vY = 0,
+			vZ = Math.sin(pAngle) * speed,
+			particle = new THREE.Vector3(
+				pos.x + Math.cos(pAngle) * radius,
+				pos.y + 1,
+				pos.z + Math.sin(pAngle) * radius
+			),
+			xvel = vX * 0.05,
+			yvel = 0,
+			zvel = vZ * 0.05;
+
+		particle.velocity = new THREE.Vector3(xvel, yvel, zvel);
+		particles.vertices.push(particle);
+	}
+
+	var mat = pMaterial.clone();
+	mat.color = new THREE.Color(color);
+	mat.depthWrite = false;
+	var particleSystem = new THREE.Points(particles, mat);
+	particleSystem.sortParticles = false;
+	scene.add(particleSystem);
+	particleSystems.push(particleSystem);
 }
 
 function updateParticles() {
 	for (let particleSystem of particleSystems) {
 		for (let particle of particleSystem.geometry.vertices) {
-			if (particle.y < -200) {
-				// TODO: remove particle system
-			}
-
-			particle.velocity.y -= Math.random();
 			particle.add(particle.velocity);
+			particle.velocity.multiplyScalar(0.9);
+
+			var len = particle.velocity.lengthSq();
+			particleSystem.material.opacity = Math.min(0.2, len*0.1);
+
+			if (len < 0.01) {
+				scene.remove(particleSystem);
+				particleSystems.splice(particleSystems.indexOf(particleSystem), 1);
+				particleSystem.geometry.dispose();
+				particleSystem.material.dispose();
+				return;
+			}
 		}
 
 		particleSystem.geometry.verticesNeedUpdate = true;
@@ -313,7 +404,7 @@ function step(timestamp) {
 		audioManager.lastBar = audioManager.getBar();
 
 		for (var i = 0; i < drums.length; i++) {
-			drums[i].hit(0.02);
+			drums[i].hit(0.03);
 		}
 	}
 

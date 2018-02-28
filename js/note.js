@@ -25,7 +25,7 @@ Note.prototype.update = function (elapsed) {
 
 		this.mesh.scale.copy(this.scale);
 		this.mesh.scale.multiplyScalar(Math.pow(Math.max(0.001, 1-fac), 0.8));
-		this.mat.opacity = 1-fac;
+		this.mat.opacity = 0.8*(1-fac);
 
 		if (fac > 2) {
 			this.destroy();
@@ -40,13 +40,14 @@ Note.prototype.update = function (elapsed) {
 Note.prototype.create = function (elapsed) {
 	this.geo = new THREE.SphereGeometry( this.radius, 32, 32 );
 	//this.geo = new THREE.CylinderGeometry( this.radius, this.radius, this.height/2, 32 );
-	this.mat = new THREE.MeshBasicMaterial( {color: 0xE91E63} );
+	this.mat = new THREE.MeshBasicMaterial( {color: 0x42A5F5} );
 	this.mat.transparent = true;
 	this.mesh = new THREE.Mesh( this.geo, this.mat );
 	scene.add( this.mesh );
 
 	this.scale = new THREE.Vector3(1, 0.2, 1);
 	this.mesh.castShadow = true;
+	this.mesh.receiveShadow = true;
 	this.mat.opacity = 0;
 
 	this.mesh.position.copy(this.parentPos);

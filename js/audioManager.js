@@ -77,10 +77,23 @@ AudioManager.prototype.play = function(name, volume=1.0, pitch=1.0) {
 	this.sounds[name].play();
 };
 
+AudioManager.prototype.stop = function(name) {
+	if (this.sounds[name].isPlaying)
+		this.sounds[name].stop();
+};
+
 AudioManager.prototype.startMusic = function(name) {
 	this.currentSong = name;
 	this.play(name, 1);
 	this.startTime = Date.now();
+	self.elapsed = 0;
+	self.paused = false;
+};
+
+AudioManager.prototype.stopMusic = function(name) {
+	this.stop(this.currentSong);
+	this.currentSong = null;
+	this.startTime = 0;
 	self.elapsed = 0;
 	self.paused = false;
 };

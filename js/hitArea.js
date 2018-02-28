@@ -31,10 +31,12 @@ HitArea.prototype.update = function () {
 HitArea.prototype.checkCollision = function (hand)
 {
 	// Skip thumb
-	for (var i = 1; i < hand.fingers.length; i++) {
-		if (hand.fingers[i]) {
-			var point = arrayToVector(hand.fingers[i].tipPosition);
-			var velocity = arrayToVector(hand.fingers[i].tipVelocity);
+	var fingerOrder = [2,3,1,4];
+	for (var i = 0; i < 4; i++) {
+		var f = fingerOrder[i];
+		if (hand.fingers[f]) {
+			var point = arrayToVector(hand.fingers[f].tipPosition);
+			var velocity = arrayToVector(hand.fingers[f].tipVelocity);
 			//point.y += velocity.y/100; Will pass through
 			this.checkPointCollision(point, velocity);
 		}
@@ -57,7 +59,7 @@ HitArea.prototype.checkPointCollision = function (point, velocity)
 		var speedFac = Math.min(1000, -velocity.y - 100) / 1000;
 
 		if (!this.isHit) {
-			var volume = 0.7 + 1.0 * speedFac - 1.0 * distFac;
+			var volume = 0.5 + 1.5 * speedFac - 1.0 * distFac;
 			var volumeSide = 1.0 * distFac + 0.5 * speedFac;
 			var pitch = 1.0 + 0.5 * distFac;
 			var pitchSide = 0.9 + (100-this.radius)/100; // 65-85 (0.15-0.35)
@@ -66,9 +68,9 @@ HitArea.prototype.checkPointCollision = function (point, velocity)
 			audioManager.play(this.sound, volume, pitch);
 			audioManager.play('side', volumeSide, pitchSide);
 
-			this.owner.hit();
+			this.owner.hit(0.05 + 0.15*speedFac);
 			if (this.callback) {
-				this.callback(this);
+				this.callback(this, planePoint);
 			}
 		}
 		this.hit(speedFac);

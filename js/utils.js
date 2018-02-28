@@ -26,7 +26,7 @@ function pickHex(color1, color2, weight) {
 	var rgb = [Math.round(color1[0] * w1 + color2[0] * w2),
 		Math.round(color1[1] * w1 + color2[1] * w2),
 		Math.round(color1[2] * w1 + color2[2] * w2)];
-	return rgb;
+    return (1 << 24) + (rgb[0] << 16) + (rgb[1] << 8) + rgb[2];
 }
 
 // Generalized smoothstep
