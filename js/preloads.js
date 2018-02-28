@@ -58,12 +58,12 @@ function preload_mesh(name, on_complete) {
 
 function preload_music(name, on_complete) {
 	var audioLoader = new THREE.AudioLoader();
-	audioLoader.load('/assets/music/' + name + '.mp3', on_complete);
+	audioLoader.load('assets/music/' + name + '.mp3', on_complete);
 }
 
 function preload_sound(name, on_complete) {
 	var audioLoader = new THREE.AudioLoader();
-	audioLoader.load('/assets/sounds/' + name + '.wav', on_complete);
+	audioLoader.load('assets/sounds/' + name + '.wav', on_complete);
 }
 
 function preload_font(name, on_complete) {
