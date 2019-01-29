@@ -17,7 +17,10 @@ function extend(base, sub) {
 }
 
 function arrayToVector(array) {
-	return new THREE.Vector3(array[0], array[1], array[2]);
+	if (array) {
+		return new THREE.Vector3(array[0], array[1], array[2]);
+	}
+	return new THREE.Vector3(0,0,0);
 }
 
 function pickHex(color1, color2, weight) {
